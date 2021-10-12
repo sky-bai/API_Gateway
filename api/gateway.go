@@ -1,12 +1,11 @@
 package main
 
 import (
+	"API_Gateway/api/internal/config"
+	"API_Gateway/api/internal/handler"
+	"API_Gateway/api/internal/svc"
 	"flag"
 	"fmt"
-
-	"api/internal/config"
-	"api/internal/handler"
-	"api/internal/svc"
 
 	"github.com/tal-tech/go-zero/core/conf"
 	"github.com/tal-tech/go-zero/rest"

@@ -7,3 +7,6 @@ CacheRedis:
   - Host: $host
     Pass: $pass
     Type: node
+Auth:
+  AccessSecret: jkljkljkljkljkljkl
+  AccessExpire: 7200

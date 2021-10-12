@@ -2,10 +2,9 @@
 package handler
 
 import (
+	"API_Gateway/api/internal/handler/admin"
+	"API_Gateway/api/internal/svc"
 	"net/http"
-
-	admin "api/internal/handler/admin"
-	"api/internal/svc"
 
 	"github.com/tal-tech/go-zero/rest"
 )

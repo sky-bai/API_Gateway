@@ -1,12 +1,11 @@
 package admin
 
 import (
-	"net/http"
-
-	"api/internal/logic/admin"
-	"api/internal/svc"
-	"api/internal/types"
+	"API_Gateway/api/internal/logic/admin"
+	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/internal/types"
 	"github.com/tal-tech/go-zero/rest/httpx"
+	"net/http"
 )
 
 func AdminLoginHandler(ctx *svc.ServiceContext) http.HandlerFunc {
