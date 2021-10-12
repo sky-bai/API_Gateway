@@ -1,0 +1,9 @@
+Name: gateway-api
+Host: 0.0.0.0
+Port: 8888
+Mysql:
+  DataSource: root:123456@tcp(192.168.6.100:3306)/gateway?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+CacheRedis:
+  - Host: $host
+    Pass: $pass
+    Type: node
