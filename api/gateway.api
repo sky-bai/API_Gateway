@@ -1,35 +1,38 @@
 syntax = "v1"
 
 info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+	title: "type title here"
+	desc: "type desc here"
+	author: "type author here"
+	email: "type email here"
+	version: "type version here"
 )
 
 // 登陆请求
 type LoginRequest {
-    UserName string `json:"username" form:"username" comment:"管理员用户名"  validate:"required,valid_username"` //管理员用户名
-    Password string `json:"password" form:"password" validate:"required"`
+	UserName string `json:"username" form:"username" comment:"管理员用户名"  validate:"required,valid_username"` //管理员用户名
+	Password string `json:"password" form:"password" validate:"required"`
 }
 // 登陆Reponse
 type LoginReponse {
-    AccessToken string `json:"accessToken"`
-    AccessExpire int64 `json:"accessExpire"`
-    RefreshAfter int64 `json:"refreshAfter"`
+	AccessToken  string `json:"accessToken"`
+	AccessExpire int64  `json:"accessExpire"`
+	RefreshAfter int64  `json:"refreshAfter"`
 }
 
-type LoOutReponse {
-    Message string `json:"message" form:"message"  validate:"required"` // 退出信息
+// 退出登陆Reponse
+type LogOutReponse {
+	Message string `json:"message" form:"message"  validate:"required"` // 退出信息
 }
 
 @server(
-    group: admin
+	group: admin
 )
 service gateway-api {
-    @handler adminLogin
-    post /admin/login (LoginRequest) returns (LoginReponse);
-    @handler adminLogOut
-    get /admin/logout returns (LoginReponse);
+	
+	@handler adminLogin
+	post /admin/login (LoginRequest) returns (LoginReponse);
+	
+	@handler adminLogOut
+	get /admin/logout returns (LogOutReponse);
 }

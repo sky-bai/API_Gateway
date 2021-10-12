@@ -43,12 +43,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/api/internal/logic/admin/adminlogoutlogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/api/internal/svc/servicecontext.go">
           <value>
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/api/internal/types/types.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/util/errcode.go">
           <value>
             <set />
           </value>

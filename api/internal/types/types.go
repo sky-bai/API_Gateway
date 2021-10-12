@@ -11,3 +11,7 @@ type LoginReponse struct {
 	AccessExpire int64  `json:"accessExpire"`
 	RefreshAfter int64  `json:"refreshAfter"`
 }
+
+type LogOutReponse struct {
+	Message string `json:"message" form:"message"  validate:"required"` // 退出信息
+}

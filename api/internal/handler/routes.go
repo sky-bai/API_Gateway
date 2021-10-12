@@ -2,9 +2,10 @@
 package handler
 
 import (
-	"API_Gateway/api/internal/handler/admin"
-	"API_Gateway/api/internal/svc"
 	"net/http"
+
+	admin "API_Gateway/api/internal/handler/admin"
+	"API_Gateway/api/internal/svc"
 
 	"github.com/tal-tech/go-zero/rest"
 )
@@ -16,6 +17,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/admin/login",
 				Handler: admin.AdminLoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/admin/logout",
+				Handler: admin.AdminLogOutHandler(serverCtx),
 			},
 		},
 	)
