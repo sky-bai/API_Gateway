@@ -19,6 +19,7 @@ var (
 	gatewayAdminRowsWithPlaceHolder = strings.Join(stringx.Remove(gatewayAdminFieldNames, "`id`", "`create_time`", "`update_time`"), "=?,") + "=?"
 
 	gatewayAdminLogin = "`password`" + "`id`"
+	updatePwd         = "`password`"
 )
 
 type (
@@ -30,6 +31,8 @@ type (
 
 		// 通过用户名查找密码
 		FindOneByUserName(userName string) (*GatewayAdmin, error)
+		// 修改密码
+		UpdatePwd(data GatewayAdmin) error
 	}
 
 	defaultGatewayAdminModel struct {
@@ -93,6 +96,13 @@ func (m *defaultGatewayAdminModel) FindOneByUserName(userName string) (*GatewayA
 func (m *defaultGatewayAdminModel) Update(data GatewayAdmin) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayAdminRowsWithPlaceHolder)
 	_, err := m.conn.Exec(query, data.UserName, data.Salt, data.Password, data.CreateAt, data.UpdateAt, data.IsDelete, data.Id)
+	return err
+}
+
+// 修改密码
+func (m *defaultGatewayAdminModel) UpdatePwd(data GatewayAdmin) error {
+	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, updatePwd)
+	_, err := m.conn.Exec(query, data.Id)
 	return err
 }
 

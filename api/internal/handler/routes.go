@@ -19,9 +19,19 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: admin.AdminLoginHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/admin/change_pwd",
+				Handler: admin.AdminChangePwdHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/admin/logout",
 				Handler: admin.AdminLogOutHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/admin/admin_info",
+				Handler: admin.AdminInfoHandler(serverCtx),
 			},
 		},
 	)

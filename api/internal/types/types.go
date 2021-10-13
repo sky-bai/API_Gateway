@@ -15,3 +15,20 @@ type LoginReponse struct {
 type LogOutReponse struct {
 	Message string `json:"message" form:"message"  validate:"required"` // 退出信息
 }
+
+type AdminInfoReponse struct {
+	ID           int      `json:"id"`
+	Name         string   `json:"name"`
+	LoginTime    int      `json:"login_time"`
+	Avatar       string   `json:"avatar"`
+	Introduction string   `json:"introduction"`
+	Roles        []string `json:"roles"`
+}
+
+type FixPwdRequest struct {
+	Password string `json:"password" form:"password" comment:"密码" example:"123456" validate:"required"` //密码
+}
+
+type FixPwdReponse struct {
+	Msg string `json:"msg"`
+}

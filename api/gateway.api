@@ -25,14 +25,37 @@ type LogOutReponse {
 	Message string `json:"message" form:"message"  validate:"required"` // 退出信息
 }
 
+// 获取用户信息
+type AdminInfoReponse {
+	ID           int      `json:"id"`
+	Name         string   `json:"name"`
+	LoginTime    int      `json:"login_time"`
+	Avatar       string   `json:"avatar"`
+	Introduction string   `json:"introduction"`
+	Roles        []string `json:"roles"`
+}
+
+type FixPwdRequest {
+	Password string `json:"password" form:"password" comment:"密码" example:"123456" validate:"required"` //密码
+}
+
+type FixPwdReponse {
+	Msg string `json:"msg"`
+}
+
 @server(
 	group: admin
 )
 service gateway-api {
-	
 	@handler adminLogin
 	post /admin/login (LoginRequest) returns (LoginReponse);
 	
+	@handler adminChangePwd
+	post /admin/change_pwd (FixPwdRequest) returns (FixPwdReponse);
+	
 	@handler adminLogOut
 	get /admin/logout returns (LogOutReponse);
+	
+	@handler adminInfo
+	get /admin/admin_info returns (AdminInfoReponse);
 }
