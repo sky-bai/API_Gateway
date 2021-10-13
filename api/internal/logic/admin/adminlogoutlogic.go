@@ -25,6 +25,7 @@ func NewAdminLogOutLogic(ctx context.Context, svcCtx *svc.ServiceContext) AdminL
 
 // 管理员退出
 func (l *AdminLogOutLogic) AdminLogOut() (*types.LogOutReponse, error) {
+	// 如果清除token
 
 	return &types.LogOutReponse{}, nil
 }

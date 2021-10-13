@@ -5,6 +5,7 @@ import (
 	"API_Gateway/api/internal/types"
 	"API_Gateway/util"
 	"context"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator/v10"
 	"github.com/tal-tech/go-zero/core/logx"
@@ -34,12 +35,22 @@ func (l *AdminLoginLogic) AdminLogin(req types.LoginRequest) (*types.LoginRepons
 		return nil, err
 	}
 
-	var userid int64
+	// 从数据库查找密码
+	adminInfo, err := l.svcCtx.GatewayAdminModel.FindOneByUserName(req.UserName)
+	if err != nil {
+		fmt.Println("查询数据库err :", err)
+		return nil, util.NewErrCode(util.UserNotFound)
+	}
+
+	// 匹配密码
+	if req.Password == adminInfo.Password {
+		return nil, util.NewErrCode(util.UserErrpPwd)
+	}
 
 	// ---start---
 	now := time.Now().Unix()
 	accessExpire := l.svcCtx.Config.Auth.AccessExpire
-	jwtToken, err := l.getJwtToken(l.svcCtx.Config.Auth.AccessSecret, now, l.svcCtx.Config.Auth.AccessExpire, userid)
+	jwtToken, err := l.getJwtToken(l.svcCtx.Config.Auth.AccessSecret, now, l.svcCtx.Config.Auth.AccessExpire, adminInfo.Id)
 	if err != nil {
 		return nil, util.NewErrCode(util.UserTokenFailSet)
 	}
