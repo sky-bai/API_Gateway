@@ -32,3 +32,28 @@ type FixPwdRequest struct {
 type FixPwdReponse struct {
 	Msg string `json:"msg"`
 }
+
+type ServiceListResquest struct {
+	Info     string `json:"info"`
+	PageNo   int    `json:"page_no"`   //页数
+	PageSize int    `json:"page_size"` //每页条数
+}
+
+type ServiceListItemReponse struct {
+	ID          int64  `json:"id" form:"id"`                     //id
+	ServiceName string `json:"service_name" form:"service_name"` //服务名称
+	ServiceDesc string `json:"service_desc" form:"service_desc"` //服务描述
+	LoadType    int    `json:"load_type" form:"load_type"`       //类型
+	ServiceAddr string `json:"service_addr" form:"service_addr"` //服务地址
+	Qps         int64  `json:"qps" form:"qps"`                   //qps
+	Qpd         int64  `json:"qpd" form:"qpd"`                   //qpd
+	TotalNode   int    `json:"total_node" form:"total_node"`     //节点数
+}
+
+type PageListReponse struct {
+	Page      int         `json:"page"`
+	Limit     int         `json:"limit"`
+	Count     int         `json:"count"`
+	TotalPage int         `json:"total_page"`
+	Data      interface{} `json:"data"`
+}

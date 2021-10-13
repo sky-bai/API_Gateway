@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	admin "API_Gateway/api/internal/handler/admin"
+	serviceInfo "API_Gateway/api/internal/handler/serviceInfo"
 	"API_Gateway/api/internal/svc"
 
 	"github.com/tal-tech/go-zero/rest"
@@ -13,6 +14,11 @@ import (
 func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 	engine.AddRoutes(
 		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/admin/ping",
+				Handler: admin.PingHandler(serverCtx),
+			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/admin/login",
@@ -32,6 +38,16 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/admin/admin_info",
 				Handler: admin.AdminInfoHandler(serverCtx),
+			},
+		},
+	)
+
+	engine.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/service/service_list",
+				Handler: serviceInfo.ServiceListHandler(serverCtx),
 			},
 		},
 	)

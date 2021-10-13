@@ -47,6 +47,9 @@ type FixPwdReponse {
 	group: admin
 )
 service gateway-api {
+	@handler ping
+	get /admin/ping returns (LogOutReponse)
+	
 	@handler adminLogin
 	post /admin/login (LoginRequest) returns (LoginReponse);
 	
@@ -58,4 +61,40 @@ service gateway-api {
 	
 	@handler adminInfo
 	get /admin/admin_info returns (AdminInfoReponse);
+}
+
+// 获取服务列表Request
+type ServiceListResquest {
+	Info     string `json:"info"`
+	PageNo   int    `json:"page_no"`   //页数
+	PageSize int    `json:"page_size"` //每页条数
+}
+
+// 获取服务列表Response
+type ServiceListItemReponse {
+	ID          int64  `json:"id" form:"id"`                     //id
+	ServiceName string `json:"service_name" form:"service_name"` //服务名称
+	ServiceDesc string `json:"service_desc" form:"service_desc"` //服务描述
+	LoadType    int    `json:"load_type" form:"load_type"`       //类型
+	ServiceAddr string `json:"service_addr" form:"service_addr"` //服务地址
+	Qps         int64  `json:"qps" form:"qps"`                   //qps
+	Qpd         int64  `json:"qpd" form:"qpd"`                   //qpd
+	TotalNode   int    `json:"total_node" form:"total_node"`     //节点数
+}
+
+// 获取信息列表
+type PageListReponse {
+	Page      int         `json:"page"`
+	Limit     int         `json:"limit"`
+	Count     int         `json:"count"`
+	TotalPage int         `json:"total_page"`
+	Data      interface{} `json:"data"`
+}
+
+@server(
+	group: serviceInfo
+)
+service gateway-api {
+	@handler serviceList
+	post /service/service_list (ServiceListResquest) returns (ServiceListItemReponse);
 }

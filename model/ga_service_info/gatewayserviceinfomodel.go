@@ -1,6 +1,7 @@
 package ga_service_info
 
 import (
+	"API_Gateway/util"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -25,6 +26,9 @@ type (
 		FindOne(id int64) (*GatewayServiceInfo, error)
 		Update(data GatewayServiceInfo) error
 		Delete(id int64) error
+
+		// 模糊查询服务信息
+		FindDataLike(info string, pageSize, pageNum int) (interface{}, error)
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -63,6 +67,34 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 	switch err {
 	case nil:
 		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// 模糊查询服务信息
+func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pageNum int) (interface{}, error) {
+
+	if pageNum == 0 {
+		pageNum = 1
+	}
+	if pageSize == 0 {
+		pageSize = 10
+	}
+
+	var countNum int
+	countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `service_name` like ? or `service_desc` like ? AND `is_delete` = 0", m.table)
+	err := m.conn.QueryRow(&countNum, countQuery, "%"+info+"%", "%"+info+"%")
+	startNum := (pageNum - 1) * pageSize
+	query := fmt.Sprintf("select %s from %s where `service_name` like ? or `service_desc` like ?  AND `is_delete` = 0 ORDER BY `id` DESC LIMIT %d,%d", gatewayServiceInfoRows, m.table, startNum, pageSize)
+	var resp []GatewayServiceInfo
+	err = m.conn.QueryRows(&resp, query, "%"+info+"%", "%"+info+"%")
+	switch err {
+	case nil:
+		res := util.CutPage(countNum, pageNum, pageSize, resp)
+		return &res, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:

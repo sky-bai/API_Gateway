@@ -28,7 +28,7 @@ func NewAdminChangePwdLogic(ctx context.Context, svcCtx *svc.ServiceContext) Adm
 	}
 }
 
-// 用户修改密码
+// 管理员修改密码
 func (l *AdminChangePwdLogic) AdminChangePwd(req types.FixPwdRequest) (*types.FixPwdReponse, error) {
 
 	//1. 从token里面取到userId
