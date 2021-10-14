@@ -1,6 +1,11 @@
 package ga_service_info
 
 import (
+	"API_Gateway/model/ga_service_access_control"
+	"API_Gateway/model/ga_service_grpc_rule"
+	"API_Gateway/model/ga_service_http_rule"
+	"API_Gateway/model/ga_service_load_balance"
+	"API_Gateway/model/ga_service_tcp_rule"
 	"API_Gateway/util"
 	"database/sql"
 	"fmt"
@@ -44,6 +49,15 @@ type (
 		CreateAt    time.Time `db:"create_at"`    // 添加时间
 		UpdateAt    time.Time `db:"update_at"`    // 更新时间
 		IsDelete    int64     `db:"is_delete"`    // 是否删除 1=删除
+	}
+
+	ServiceDetail struct {
+		Info          *GatewayServiceInfo                                    `json:"info" description:"服务的基本信息"`
+		HTTPRule      *ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
+		TCPRule       *ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
+		GRPCRule      *ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
+		LoadBalance   *ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
+		AccessControl *ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
 	}
 )
 

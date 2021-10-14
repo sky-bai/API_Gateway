@@ -31,4 +31,13 @@ const (
 	UserFailPay        = 200015
 	UserNoBank         = 200016
 	UserErrarg         = 200017
+
+	// 服务类型
+	LoadTypeHTTP = 0
+	LoadTypeTCP  = 1
+	LoadTypeGRPC = 2
+
+	// http 类型
+	HTTPRuleTypePrefixURL = 0
+	HTTPRuleTypeDomain    = 1
 )
