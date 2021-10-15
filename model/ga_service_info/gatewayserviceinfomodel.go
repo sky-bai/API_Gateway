@@ -88,7 +88,7 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 	}
 }
 
-// 模糊查询服务信息
+// 从服务信息表中模糊查询服务信息(服务ID )
 func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pageNum int) (interface{}, error) {
 
 	if pageNum == 0 {

@@ -43,6 +43,10 @@ type FixPwdReponse {
 	Msg string `json:"msg"`
 }
 
+type CommonReponse {
+	Msg string `json:"msg"`
+}
+
 @server(
 	group: admin
 )
@@ -91,10 +95,17 @@ type PageListReponse {
 	Data      interface{} `json:"data"`
 }
 
+type ServiceResquest {
+	ID int64 `json:"id" form:"id"` //id
+}
+
 @server(
 	group: serviceInfo
 )
 service gateway-api {
 	@handler serviceList
 	post /service/service_list (ServiceListResquest) returns (ServiceListItemReponse);
+	
+	@handler serviceDelete
+	post /service/service_delete (ServiceResquest) returns (CommonReponse);
 }

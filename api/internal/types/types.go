@@ -33,6 +33,10 @@ type FixPwdReponse struct {
 	Msg string `json:"msg"`
 }
 
+type CommonReponse struct {
+	Msg string `json:"msg"`
+}
+
 type ServiceListResquest struct {
 	Info     string `json:"info"`
 	PageNo   int    `json:"page_no"`   //页数
@@ -56,4 +60,8 @@ type PageListReponse struct {
 	Count     int         `json:"count"`
 	TotalPage int         `json:"total_page"`
 	Data      interface{} `json:"data"`
+}
+
+type ServiceResquest struct {
+	ID int64 `json:"id" form:"id"` //id
 }

@@ -24,6 +24,9 @@ type (
 		FindOne(id int64) (*GatewayServiceGrpcRule, error)
 		Update(data GatewayServiceGrpcRule) error
 		Delete(id int64) error
+
+		// 根据服务表中的服务ID进行查找该服务的grpc规则
+		FindOneByServiceId(serviceId int) (*GatewayServiceGrpcRule, error)
 	}
 
 	defaultGatewayServiceGrpcRuleModel struct {
@@ -56,6 +59,21 @@ func (m *defaultGatewayServiceGrpcRuleModel) FindOne(id int64) (*GatewayServiceG
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", gatewayServiceGrpcRuleRows, m.table)
 	var resp GatewayServiceGrpcRule
 	err := m.conn.QueryRow(&resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// 根据服务表中的服务ID进行查找该服务的grpc规则
+func (m *defaultGatewayServiceGrpcRuleModel) FindOneByServiceId(serviceId int) (*GatewayServiceGrpcRule, error) {
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceGrpcRuleRows, m.table)
+	var resp GatewayServiceGrpcRule
+	err := m.conn.QueryRow(&resp, query, serviceId)
 	switch err {
 	case nil:
 		return &resp, nil

@@ -24,6 +24,9 @@ type (
 		FindOne(id int64) (*GatewayServiceTcpRule, error)
 		Update(data GatewayServiceTcpRule) error
 		Delete(id int64) error
+
+		// 根据服务ID查出该服务的tcp信息
+		FindOneByServiceId(serviceId int) (*GatewayServiceTcpRule, error)
 	}
 
 	defaultGatewayServiceTcpRuleModel struct {
@@ -65,9 +68,25 @@ func (m *defaultGatewayServiceTcpRuleModel) FindOne(id int64) (*GatewayServiceTc
 	}
 }
 
+// 根据服务ID查出该服务的tcp信息
+func (m *defaultGatewayServiceTcpRuleModel) FindOneByServiceId(serviceId int) (*GatewayServiceTcpRule, error) {
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceTcpRuleRows, m.table)
+	var resp GatewayServiceTcpRule
+	err := m.conn.QueryRow(&resp, query, serviceId)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultGatewayServiceTcpRuleModel) Update(data GatewayServiceTcpRule) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceTcpRuleRowsWithPlaceHolder)
 	_, err := m.conn.Exec(query, data.ServiceId, data.Port, data.Id)
+
 	return err
 }
 

@@ -15,4 +15,9 @@ type Config struct {
 		AccessExpire int64
 	}
 	CacheRedis cache.CacheConf
+	Cluster    struct {
+		ClusterIp      string
+		ClusterPort    string
+		ClusterSslPort string
+	}
 }

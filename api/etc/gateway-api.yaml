@@ -10,3 +10,7 @@ CacheRedis:
 Auth:
   AccessSecret: jkljkljkljkljkljkl
   AccessExpire: 7200
+Cluster:
+  ClusterIp: "127.0.0.1"
+  ClusterPort: "8080"
+  ClusterSslPort: "4433"

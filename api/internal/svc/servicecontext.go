@@ -7,6 +7,7 @@ import (
 	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
+	"API_Gateway/model/ga_service_load_balance"
 	"API_Gateway/model/ga_service_tcp_rule"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
 )
@@ -19,6 +20,7 @@ type ServiceContext struct {
 	GatewayServiceHttpRuleModel      ga_service_http_rule.GatewayServiceHttpRuleModel
 	GatewayServiceTcpRuleModel       ga_service_tcp_rule.GatewayServiceTcpRuleModel
 	GatewayServiceAccessControlModel ga_service_access_control.GatewayServiceAccessControlModel
+	GatewayServiceLoadBalanceModel   ga_service_load_balance.GatewayServiceLoadBalanceModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -32,5 +34,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GatewayServiceHttpRuleModel:      ga_service_http_rule.NewGatewayServiceHttpRuleModel(conn),
 		GatewayServiceTcpRuleModel:       ga_service_tcp_rule.NewGatewayServiceTcpRuleModel(conn),
 		GatewayServiceAccessControlModel: ga_service_access_control.NewGatewayServiceAccessControlModel(conn),
+		GatewayServiceLoadBalanceModel:   ga_service_load_balance.NewGatewayServiceLoadBalanceModel(conn),
 	}
 }

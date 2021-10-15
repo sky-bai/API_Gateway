@@ -49,6 +49,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/service/service_list",
 				Handler: serviceInfo.ServiceListHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/service/service_delete",
+				Handler: serviceInfo.ServiceDeleteHandler(serverCtx),
+			},
 		},
 	)
 }

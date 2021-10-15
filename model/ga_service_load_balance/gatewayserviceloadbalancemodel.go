@@ -24,6 +24,8 @@ type (
 		FindOne(id int64) (*GatewayServiceLoadBalance, error)
 		Update(data GatewayServiceLoadBalance) error
 		Delete(id int64) error
+
+		FindOneByServiceId(serviceId int) (*GatewayServiceLoadBalance, error)
 	}
 
 	defaultGatewayServiceLoadBalanceModel struct {
@@ -65,6 +67,20 @@ func (m *defaultGatewayServiceLoadBalanceModel) FindOne(id int64) (*GatewayServi
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", gatewayServiceLoadBalanceRows, m.table)
 	var resp GatewayServiceLoadBalance
 	err := m.conn.QueryRow(&resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultGatewayServiceLoadBalanceModel) FindOneByServiceId(serviceId int) (*GatewayServiceLoadBalance, error) {
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceLoadBalanceRows, m.table)
+	var resp GatewayServiceLoadBalance
+	err := m.conn.QueryRow(&resp, query, serviceId)
 	switch err {
 	case nil:
 		return &resp, nil
