@@ -39,6 +39,11 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (interface
 	}
 	ServiceInfo := dataLike.([]ga_service_info.GatewayServiceInfo)
 
+	//for _, info := range ServiceInfo {
+	//	idList:=[]int64{}
+	//	idlist := append(idList, info.Id)
+	//}
+
 	httpRule := &ga_service_http_rule.GatewayServiceHttpRule{}
 	tcpRule := &ga_service_tcp_rule.GatewayServiceTcpRule{}
 	grpcRule := &ga_service_grpc_rule.GatewayServiceGrpcRule{}
