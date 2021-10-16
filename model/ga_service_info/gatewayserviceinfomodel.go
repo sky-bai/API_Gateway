@@ -2,10 +2,8 @@ package ga_service_info
 
 import (
 	"API_Gateway/model/ga_service_access_control"
-	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_load_balance"
-	"API_Gateway/model/ga_service_tcp_rule"
 	"API_Gateway/util"
 	"database/sql"
 	"fmt"
@@ -34,6 +32,9 @@ type (
 
 		// 模糊查询服务信息
 		FindDataLike(info string, pageSize, pageNum int) (interface{}, error)
+
+		// 添加一个服务
+		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -46,18 +47,9 @@ type (
 		LoadType    int64     `db:"load_type"`    // 负载类型 0=http 1=tcp 2=grpc
 		ServiceName string    `db:"service_name"` // 服务名称 6-128 数字字母下划线
 		ServiceDesc string    `db:"service_desc"` // 服务描述
-		CreateAt    time.Time `db:"create_at"`    // 添加时间
-		UpdateAt    time.Time `db:"update_at"`    // 更新时间
+		CreateTime  time.Time `db:"create_time"`  // 添加时间
+		UpdateTime  time.Time `db:"update_time"`  // 更新时间
 		IsDelete    int64     `db:"is_delete"`    // 是否删除 1=删除
-	}
-
-	ServiceDetail struct {
-		Info          *GatewayServiceInfo                                    `json:"info" description:"服务的基本信息"`
-		HTTPRule      *ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
-		TCPRule       *ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
-		GRPCRule      *ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
-		LoadBalance   *ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
-		AccessControl *ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
 	}
 )
 
@@ -69,8 +61,8 @@ func NewGatewayServiceInfoModel(conn sqlx.SqlConn) GatewayServiceInfoModel {
 }
 
 func (m *defaultGatewayServiceInfoModel) Insert(data GatewayServiceInfo) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, gatewayServiceInfoRowsExpectAutoSet)
-	ret, err := m.conn.Exec(query, data.LoadType, data.ServiceName, data.ServiceDesc, data.CreateAt, data.UpdateAt, data.IsDelete)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, gatewayServiceInfoRowsExpectAutoSet)
+	ret, err := m.conn.Exec(query, data.LoadType, data.ServiceName, data.ServiceDesc, data.IsDelete)
 	return ret, err
 }
 
@@ -86,6 +78,92 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 	default:
 		return nil, err
 	}
+}
+
+func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
+	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceInfoRowsWithPlaceHolder)
+	_, err := m.conn.Exec(query, data.LoadType, data.ServiceName, data.ServiceDesc, data.IsDelete, data.Id)
+	return err
+}
+
+func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
+	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+	_, err := m.conn.Exec(query, id)
+	return err
+}
+
+// 添加一个服务
+func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
+
+	insertServiceSql := fmt.Sprintf("insert into %s (%s) values (%d,'%s','%s',%d)", m.table, gatewayServiceInfoRowsExpectAutoSet, 0, req.ServiceName, req.ServiceDesc, 0)
+	fmt.Println("insertServiceSql", insertServiceSql)
+
+	err := m.conn.Transact(func(session sqlx.Session) error {
+
+		// 1.在serviceInfo表里面添加一条数据
+		stmt, err := session.Prepare(insertServiceSql)
+		if err != nil {
+			fmt.Println("insertServiceSql prepare", insertServiceSql)
+			fmt.Println(err)
+			return err
+		}
+		defer stmt.Close()
+		sqlResult, err := stmt.Exec()
+		if err != nil {
+			fmt.Println("insertServiceSql exec", err)
+			return err
+		}
+
+		// 2.拿到刚刚插入服务表的那条记录ID 写入http规则表
+		InsertId, _ := sqlResult.LastInsertId()
+		insertRuleSql := fmt.Sprintf("insert into gateway_service_http_rule (service_id,rule_type,rule,need_https,need_strip_uri,need_websocket,url_rewrite,header_transfor) values (%d,%d,'%s',%d,%d,%d,'%s','%s')", InsertId, data.RuleType, data.Rule, data.NeedHttps, data.NeedStripUri, data.NeedWebsocket, data.UrlRewrite, data.HeaderTransfor)
+		fmt.Println("insertRuleSql :", insertRuleSql)
+
+		stmt1, err := session.Prepare(insertRuleSql)
+		if err != nil {
+			fmt.Println("InsertFrozendSql err:", err)
+			return err
+		}
+		defer stmt1.Close()
+		if _, err := stmt1.Exec(); err != nil {
+			fmt.Println("insertRuleSql err:", err)
+			return err
+		}
+
+		// 3.写入权限控制表
+		insertAccessControlSql := fmt.Sprintf("insert into gateway_service_access_control (service_id,service_flow_limit,clientip_flow_limit,open_auth,black_list,need_websocket,url_rewrite,header_transfor) values (%d,%d,%d,%d,'%s','%s')", InsertId, accessControl.ServiceFlowLimit, accessControl.ClientipFlowLimit, accessControl.OpenAuth, accessControl.BlackList, accessControl.WhiteList)
+		fmt.Println("insertAccessControlSql :", insertAccessControlSql)
+
+		stmt2, err := session.Prepare(insertAccessControlSql)
+		if err != nil {
+			fmt.Println("insertAccessControlSql err:", err)
+			return err
+		}
+		defer stmt2.Close()
+		if _, err := stmt2.Exec(); err != nil {
+			fmt.Println("insertAccessControlSql err:", err)
+			return err
+		}
+
+		// 4.写入负载均衡控制表
+		insertLoadBalanceSql := fmt.Sprintf("insert into gateway_service_load_balance (service_id,round_type,ip_list,weight_list,upstream_connect_timeout,upstream_header_timeout,upstream_idle_timeout,upstream_max_idle) values (%d,%d,'%s','%s',%d,%d,%d,%d)", InsertId, loadBalance.RoundType, loadBalance.IpList, loadBalance.WeightList, loadBalance.UpstreamConnectTimeout, loadBalance.UpstreamHeaderTimeout, loadBalance.UpstreamIdleTimeout, loadBalance.UpstreamMaxIdle)
+		fmt.Println("insertLoadBalanceSql :", insertLoadBalanceSql)
+
+		stmt3, err := session.Prepare(insertLoadBalanceSql)
+		if err != nil {
+			fmt.Println("insertLoadBalanceSql err:", err)
+			return err
+		}
+		defer stmt3.Close()
+		if _, err := stmt3.Exec(); err != nil {
+			fmt.Println("insertLoadBalanceSql err:", err)
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }
 
 // 从服务信息表中模糊查询服务信息(服务ID )
@@ -114,16 +192,4 @@ func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pag
 	default:
 		return nil, err
 	}
-}
-
-func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceInfoRowsWithPlaceHolder)
-	_, err := m.conn.Exec(query, data.LoadType, data.ServiceName, data.ServiceDesc, data.CreateAt, data.UpdateAt, data.IsDelete, data.Id)
-	return err
-}
-
-func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.Exec(query, id)
-	return err
 }
