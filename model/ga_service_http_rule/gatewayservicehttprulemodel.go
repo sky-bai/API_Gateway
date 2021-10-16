@@ -27,6 +27,9 @@ type (
 
 		// 根据服务ID去查出一条http数据
 		FindOneByServiceId(serviceId int) (*GatewayServiceHttpRule, error)
+
+		// 根据ruleType(匹配类型) 和 rule规则查找数据
+		FindOneByRule(ruleType int, rule string) (*GatewayServiceHttpRule, error)
 	}
 
 	defaultGatewayServiceHttpRuleModel struct {
@@ -69,6 +72,21 @@ func (m *defaultGatewayServiceHttpRuleModel) FindOne(id int64) (*GatewayServiceH
 		return &resp, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// 根据ruleType(匹配类型) 和 rule规则查找数据
+func (m *defaultGatewayServiceHttpRuleModel) FindOneByRule(ruleType int, rule string) (*GatewayServiceHttpRule, error) {
+	query := fmt.Sprintf("select id from %s where `rule_type` = ? and `rule` = ? limit 1", m.table)
+	var resp GatewayServiceHttpRule
+	err := m.conn.QueryRow(&resp, query, ruleType, rule)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return &resp, nil
 	default:
 		return nil, err
 	}
