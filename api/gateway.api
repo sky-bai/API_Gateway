@@ -127,6 +127,34 @@ type AddHTTPResquest {
 	UpstreamMaxIdle        int    `json:"upstream_max_idle"  validate:"min=0"`               //最大空闲链接数
 }
 
+type UpdateHTTPResquest {
+	ID          int64  `json:"id"  validate:"required,min=1"`                                                                                      //服务ID
+	ServiceName string `json:"service_name" validate:"required,valid_service_name"`                                                                //服务名
+	ServiceDesc string `json:"service_desc" form:"service_desc" comment:"服务描述" example:"test_http_service_indb" validate:"required,max=255,min=1"` //服务描述
+
+	RuleType       int    `json:"rule_type"  validate:"max=1,min=0"`                 //接入类型
+	Rule           string `json:"rule"  validate:"required,valid_rule"`              //域名或者前缀
+	NeedHttps      int    `json:"need_https"  validate:"max=1,min=0"`                //支持https
+	NeedStripUri   int    `json:"need_strip_uri"  validate:"max=1,min=0"`            //启用strip_uri
+	NeedWebsocket  int    `json:"need_websocket"  validate:"max=1,min=0"`            //是否支持websocket
+	UrlRewrite     string `json:"url_rewrite"  validate:"valid_url_rewrite"`         //url重写功能
+	HeaderTransfor string `json:"header_transfor"  validate:"valid_header_transfor"` //header转换
+
+	OpenAuth          int    `json:"open_auth"  validate:"max=1,min=0"`               //关键词
+	BlackList         string `json:"black_list"   validate:""`                        //黑名单ip
+	WhiteList         string `json:"white_list"  validate:""`                         //白名单ip
+	ClientipFlowLimit int    `json:"clientip_flow_limit"  validate:"min=0"`           //客户端ip限流
+	ServiceFlowLimit  int    `json:"service_flow_limit"  example:"" validate:"min=0"` //服务端限流
+
+	RoundType              int    `json:"round_type" validate:"max=3,min=0"`                //轮询方式
+	IpList                 string `json:"ip_list"  validate:"required,valid_ipportlist"`    //ip列表
+	WeightList             string `json:"weight_list" validate:"required,valid_weightlist"` //权重列表
+	UpstreamConnectTimeout int    `json:"upstream_connect_timeout" " validate:"min=0"`      //建立连接超时, 单位s
+	UpstreamHeaderTimeout  int    `json:"upstream_header_timeout"  validate:"min=0"`        //获取header超时, 单位s
+	UpstreamIdleTimeout    int    `json:"upstream_idle_timeout"  validate:"min=0"`          //链接最大空闲时间, 单位s
+	UpstreamMaxIdle        int    `json:"upstream_max_idle"  validate:"min=0"`              //最大空闲链接数
+}
+
 @server(
 	group: serviceInfo
 )
@@ -139,4 +167,7 @@ service gateway-api {
 	
 	@handler serviceAddHttp
 	post /service/service_add_http (AddHTTPResquest) returns (CommonReponse);
+	
+	@handler serviceUpdateHttp
+	post /service/service_Update_http (UpdateHTTPResquest) returns (CommonReponse);
 }

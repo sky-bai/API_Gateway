@@ -59,6 +59,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/service/service_add_http",
 				Handler: serviceInfo.ServiceAddHttpHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/service/service_Update_http",
+				Handler: serviceInfo.ServiceUpdateHttpHandler(serverCtx),
+			},
 		},
 	)
 }
