@@ -24,6 +24,9 @@ type (
 		FindOne(id int64) (*GatewayServiceAccessControl, error)
 		Update(data GatewayServiceAccessControl) error
 		Delete(id int64) error
+
+		// 根据服务ID去查
+		FindOneByServiceId(serviceId int64) (*GatewayServiceAccessControl, error)
 	}
 
 	defaultGatewayServiceAccessControlModel struct {
@@ -60,6 +63,19 @@ func (m *defaultGatewayServiceAccessControlModel) FindOne(id int64) (*GatewaySer
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", gatewayServiceAccessControlRows, m.table)
 	var resp GatewayServiceAccessControl
 	err := m.conn.QueryRow(&resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+func (m *defaultGatewayServiceAccessControlModel) FindOneByServiceId(serviceId int64) (*GatewayServiceAccessControl, error) {
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceAccessControlRows, m.table)
+	var resp GatewayServiceAccessControl
+	err := m.conn.QueryRow(&resp, query, serviceId)
 	switch err {
 	case nil:
 		return &resp, nil

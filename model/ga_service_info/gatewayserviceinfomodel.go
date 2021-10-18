@@ -35,6 +35,7 @@ type (
 
 		// 添加一个服务
 		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
+		UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -86,6 +87,18 @@ func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
 	return err
 }
 
+// 更新http服务
+func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
+	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceInfoRowsWithPlaceHolder)
+	_, err := m.conn.Exec(query)
+	if err != nil {
+		fmt.Println(err)
+		//todo
+
+		return err
+	}
+	return err
+}
 func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)
