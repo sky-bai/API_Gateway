@@ -6,6 +6,7 @@ import (
 
 	admin "API_Gateway/api/internal/handler/admin"
 	serviceInfo "API_Gateway/api/internal/handler/serviceInfo"
+	serviceTcp "API_Gateway/api/internal/handler/serviceTcp"
 	"API_Gateway/api/internal/svc"
 
 	"github.com/tal-tech/go-zero/rest"
@@ -73,6 +74,16 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/service/service_status/:id",
 				Handler: serviceInfo.ServiceStatusHandler(serverCtx),
+			},
+		},
+	)
+
+	engine.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/service/service_add_tcp",
+				Handler: serviceTcp.AddTcpHandler(serverCtx),
 			},
 		},
 	)

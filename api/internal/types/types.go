@@ -147,3 +147,24 @@ type ServiceStatusResponse struct {
 	Today     []int `json:"today"`
 	Yesterday []int `json:"yesterday"`
 }
+
+type AddTcpRequest struct {
+	ServiceName       string `json:"service_name"  validate:"required,valid_service_name"`
+	ServiceDesc       string `json:"service_desc"  validate:"required"`
+	Port              int    `json:"port"  validate:"required,min=8001,max=8999"`
+	HeaderTransfor    string `json:"header_transfor"  validate:""`
+	OpenAuth          int    `json:"open_auth"  validate:""`
+	BlackList         string `json:"black_list"  validate:"valid_iplist"`
+	WhiteList         string `json:"white_list"  validate:"valid_iplist"`
+	WhiteHostName     string `json:"white_host_name"  validate:"valid_iplist"`
+	ClientIPFlowLimit int    `json:"clientip_flow_limit"  validate:""`
+	ServiceFlowLimit  int    `json:"service_flow_limit"  validate:""`
+	RoundType         int    `json:"round_type" validate:""`
+	IpList            string `json:"ip_list"  validate:"required,valid_ipportlist"`
+	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`
+	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`
+}
+
+type Reponse struct {
+	Msg string `json:"msg"`
+}
