@@ -186,6 +186,10 @@ type ServiceDetailResponse {
 	UpstreamMaxIdle        int    `json:"upstream_max_idle"  validate:"min=0"`               //最大空闲链接数
 }
 
+type ServiceStatusResponse {
+	Today     []int `json:"today"`
+	Yesterday []int `json:"yesterday"`
+}
 @server(
 	group: serviceInfo
 )
@@ -204,4 +208,8 @@ service gateway-api {
 	
 	@handler serviceDetail
 	get /service/service_detail/:id (ServiceDetailResquest) returns (ServiceDetailResponse);
+	
+	@handler serviceStatus
+	get /service/service_status/:id (ServiceDetailResquest) returns (ServiceStatusResponse);
+	
 }

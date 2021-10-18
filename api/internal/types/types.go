@@ -142,3 +142,8 @@ type ServiceDetailResponse struct {
 	UpstreamIdleTimeout    int    `json:"upstream_idle_timeout"  validate:"min=0"`           //链接最大空闲时间, 单位s
 	UpstreamMaxIdle        int    `json:"upstream_max_idle"  validate:"min=0"`               //最大空闲链接数
 }
+
+type ServiceStatusResponse struct {
+	Today     []int `json:"today"`
+	Yesterday []int `json:"yesterday"`
+}
