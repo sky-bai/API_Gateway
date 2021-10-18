@@ -36,6 +36,9 @@ type (
 		// 添加一个服务
 		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
 		UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
+
+		// 根据服务名查找一条数据
+		FindOneByServiceName(serviceName string) (int, error)
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -78,6 +81,21 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 		return nil, ErrNotFound
 	default:
 		return nil, err
+	}
+}
+
+// 根据服务名查找一条数据
+func (m *defaultGatewayServiceInfoModel) FindOneByServiceName(serviceName string) (int, error) {
+	query := fmt.Sprintf("select id from %s where `service_name` = ? limit 1", m.table)
+	var resp int
+	err := m.conn.QueryRow(&resp, query, serviceName)
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return 0, nil
+	default:
+		return 0, err
 	}
 }
 

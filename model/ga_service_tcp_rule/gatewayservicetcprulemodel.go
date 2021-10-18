@@ -27,6 +27,9 @@ type (
 
 		// 根据服务ID查出该服务的tcp信息
 		FindOneByServiceId(serviceId int) (*GatewayServiceTcpRule, error)
+
+		// 根据端口号查询出该服务的tcp信息
+		FindOneByPort(port int) (int, error)
 	}
 
 	defaultGatewayServiceTcpRuleModel struct {
@@ -65,6 +68,21 @@ func (m *defaultGatewayServiceTcpRuleModel) FindOne(id int64) (*GatewayServiceTc
 		return nil, ErrNotFound
 	default:
 		return nil, err
+	}
+}
+
+// 根据端口号查询出该服务的tcp信息
+func (m *defaultGatewayServiceTcpRuleModel) FindOneByPort(port int) (int, error) {
+	query := fmt.Sprintf("select id from %s where `port` = ? limit 1", m.table)
+	var resp int
+	err := m.conn.QueryRow(&resp, query, port)
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return 0, nil
+	default:
+		return 0, err
 	}
 }
 
