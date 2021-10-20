@@ -1,5 +1,5 @@
 Name: gateway-api
-Host: 192.168.6.102
+Host: 127.0.0.1
 Port: 8887
 Mysql:
   DataSource: root:12345678@tcp(127.0.0.1:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai

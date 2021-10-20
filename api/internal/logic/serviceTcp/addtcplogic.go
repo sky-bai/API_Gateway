@@ -84,5 +84,12 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Reponse, error) {
 	accessControl.ClientipFlowLimit = int64(req.ClientIPFlowLimit)
 	accessControl.ServiceFlowLimit = int64(req.ServiceFlowLimit)
 
+	// 8.在表里添加tcp服务
+	err = l.svcCtx.GatewayServiceInfoModel.InsertTcpService(serviceInfo, tcpRule, accessControl, loadBalance)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("添加tcp服务失败")
+	}
+
 	return &types.Reponse{Msg: "增加tcp服务成功"}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_load_balance"
+	"API_Gateway/model/ga_service_tcp_rule"
 	"API_Gateway/util"
 	"database/sql"
 	"fmt"
@@ -39,6 +40,9 @@ type (
 
 		// 根据服务名查找一条数据
 		FindOneByServiceName(serviceName string) (int, error)
+
+		// 添加tcp服务
+		InsertTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -53,7 +57,7 @@ type (
 		ServiceDesc string    `db:"service_desc"` // 服务描述
 		CreateTime  time.Time `db:"create_time"`  // 添加时间
 		UpdateTime  time.Time `db:"update_time"`  // 更新时间
-		IsDelete    int64     `db:"is_delete"`    // 是否删除 1=删除
+		IsDelete    int64     `db:"is_delete"`    // 是否删除 1=删除 0=未删除
 	}
 )
 
@@ -123,7 +127,7 @@ func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
 	return err
 }
 
-// 添加一个服务
+// 添加一个http服务
 func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
 
 	insertServiceSql := fmt.Sprintf("insert into %s (%s) values (%d,'%s','%s',%d)", m.table, gatewayServiceInfoRowsExpectAutoSet, 0, req.ServiceName, req.ServiceDesc, 0)
@@ -194,6 +198,75 @@ func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data
 		return nil
 	})
 
+	return err
+}
+
+// 添加一条tcp服务
+func (m *defaultGatewayServiceInfoModel) InsertTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error {
+	insertServiceSql := fmt.Sprintf("insert into %s (%s) values (%d,'%s','%s',%d)", m.table, gatewayServiceInfoRowsExpectAutoSet, 1, req.ServiceName, req.ServiceDesc, 0)
+	fmt.Println("insertServiceSql", insertServiceSql)
+	err := m.conn.Transact(func(session sqlx.Session) error {
+
+		// 1.在serviceInfo表里面添加一条数据
+		stmt, err := session.Prepare(insertServiceSql)
+		if err != nil {
+			fmt.Println("insertServiceSql prepare", insertServiceSql)
+			fmt.Println(err)
+			return err
+		}
+		defer stmt.Close()
+		sqlResult, err := stmt.Exec()
+		if err != nil {
+			fmt.Println("insertServiceSql exec", err)
+			return err
+		}
+
+		// 2.拿到刚刚插入服务表的那条记录ID 写入tcp规则表
+		InsertId, _ := sqlResult.LastInsertId()
+		insertRuleSql := fmt.Sprintf("insert into gateway_service_tcp_rule (service_id,port) values (%d,%d)", InsertId, data.Port)
+		fmt.Println("insertTcpRuleSql :", insertRuleSql)
+		stmt1, err := session.Prepare(insertRuleSql)
+		if err != nil {
+			fmt.Println("insertTcpRuleSql err:", err)
+			return err
+		}
+		defer stmt1.Close()
+		if _, err := stmt1.Exec(); err != nil {
+			fmt.Println("insertTcpRuleSql err:", err)
+			return err
+		}
+
+		// 3.写入权限控制表
+		insertAccessControlSql := fmt.Sprintf("insert into gateway_service_access_control (service_id,open_auth,black_list,white_list,white_host_name,clientip_flow_limit,service_flow_limit) values (%d,%d,'%s','%s','%s',%d,%d)", InsertId, ac.OpenAuth, ac.BlackList, ac.WhiteList, ac.WhiteHostName, ac.ClientipFlowLimit, ac.ServiceFlowLimit)
+		fmt.Println("insertAccessControlSql :", insertAccessControlSql)
+		stmt2, err := session.Prepare(insertAccessControlSql)
+		if err != nil {
+			fmt.Println("insertAccessControlSql err:", err)
+			return err
+		}
+		defer stmt2.Close()
+		if _, err := stmt2.Exec(); err != nil {
+			fmt.Println("insertAccessControlSql err:", err)
+			return err
+		}
+
+		// 4.写入负载均衡控制表
+		insertLoadBalanceSql := fmt.Sprintf("insert into gateway_service_load_balance (service_id,check_method,check_timeout,check_interval,round_type,ip_list,weight_list,forbid_list,upstream_connect_timeout,upstream_header_timeout,upstream_idle_timeout,upstream_max_idle) values (%d,%d,%d,%d,%d,'%s','%s','%s',%d,%d,%d,%d)",
+			InsertId, ld.CheckMethod, ld.CheckTimeout, ld.CheckInterval, ld.RoundType, ld.IpList, ld.WeightList, ld.ForbidList, ld.UpstreamConnectTimeout, ld.UpstreamHeaderTimeout, ld.UpstreamIdleTimeout, ld.UpstreamMaxIdle)
+		fmt.Println("insertLoadBalanceSql :", insertLoadBalanceSql)
+		stmt3, err := session.Prepare(insertLoadBalanceSql)
+		if err != nil {
+			fmt.Println("insertLoadBalanceSql err:", err)
+			return err
+		}
+		defer stmt3.Close()
+		if _, err := stmt3.Exec(); err != nil {
+			fmt.Println("insertLoadBalanceSql err:", err)
+			return err
+		}
+
+		return nil
+	})
 	return err
 }
 
