@@ -160,11 +160,11 @@ func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, data
 			return err
 		}
 
-		// 2.更新tcp规则表
-		UpdateTcpSql := fmt.Sprintf("update gateway_service_http_rule set rule_type = %d rule = '%s' need_https = %d need_strip_uri = %d need_websocket = %d url_rewrite = '%s' header_transfor = '%s' where `service_id` = %d ", data.RuleType, data.Rule, data.NeedHttps, data.NeedStripUri, data.NeedWebsocket, data.UrlRewrite, data.HeaderTransfor, req.Id)
-		fmt.Println("UpdateTcpSql :", UpdateTcpSql)
+		// 2.更新http规则表
+		UpdateHttpSql := fmt.Sprintf("update gateway_service_http_rule set rule_type = %d rule = '%s' need_https = %d need_strip_uri = %d need_websocket = %d url_rewrite = '%s' header_transfor = '%s' where `service_id` = %d ", data.RuleType, data.Rule, data.NeedHttps, data.NeedStripUri, data.NeedWebsocket, data.UrlRewrite, data.HeaderTransfor, req.Id)
+		fmt.Println("UpdateHttpSql :", UpdateHttpSql)
 
-		stmt1, err := session.Prepare(UpdateTcpSql)
+		stmt1, err := session.Prepare(UpdateHttpSql)
 		if err != nil {
 			fmt.Println("UpdateTcpSql err:", err)
 			return err
@@ -210,6 +210,7 @@ func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, data
 
 	return err
 }
+
 func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)
@@ -364,5 +365,71 @@ func (m *defaultGatewayServiceInfoModel) InsertTcpService(req GatewayServiceInfo
 
 // 更新tcp服务
 func (m *defaultGatewayServiceInfoModel) UpdateTcp(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error {
-	return nil
+	UpdateServiceSql := fmt.Sprintf("update %s set service_name = '%s',service_desc = '%s' where `id` = %d", m.table, req.ServiceName, req.ServiceDesc, req.Id)
+	fmt.Println("UpdateServiceSql", UpdateServiceSql)
+
+	err := m.conn.Transact(func(session sqlx.Session) error {
+
+		// 1.更新serviceInfo表数据
+		stmt, err := session.Prepare(UpdateServiceSql)
+		if err != nil {
+			fmt.Println("updetehttpsql:err", err)
+			return err
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec()
+		if err != nil {
+			fmt.Println("UpdateServiceSql exec", err)
+			return err
+		}
+
+		// 2.更新tcp规则表
+		UpdateTcpSql := fmt.Sprintf("update gateway_service_tcp_rule set port = %d where `service_id` = %d )", data.Port, req.Id)
+		fmt.Println("UpdateTcpSql :", UpdateTcpSql)
+
+		stmt1, err := session.Prepare(UpdateTcpSql)
+		if err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return err
+		}
+		defer stmt1.Close()
+		if _, err := stmt1.Exec(); err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return err
+		}
+
+		// 3.写入权限控制表
+		updateAccessControlSql := fmt.Sprintf("update gateway_service_access_control set open_auth = %d black_list = '%s' white_list = '%s' white_host_name = '%s' clientip_flow_limit = %d service_flow_limit = %d where `service_id` = %d", ac.OpenAuth, ac.BlackList, ac.WhiteList, ac.WhiteHostName, ac.ClientipFlowLimit, ac.ServiceFlowLimit, req.Id)
+		fmt.Println("updateAccessControlSql :", updateAccessControlSql)
+
+		stmt2, err := session.Prepare(updateAccessControlSql)
+		if err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return err
+		}
+		defer stmt2.Close()
+		if _, err := stmt2.Exec(); err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return err
+		}
+
+		// 4.写入负载均衡控制表
+		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set check_method = %d,check_timeout = %d,check_interval = %d,round_type = %d,ip_list = '%s',weight_list = '%s',forbid_list = '%s',upstream_connect_timeout = %d,upstream_header_timeout = %d,upstream_idle_timeout = %d,upstream_max_idle = %d where `service_id` = %d", ld.CheckMethod, ld.CheckTimeout, ld.CheckInterval, ld.WeightList, ld.IpList, ld.WeightList, ld.ForbidList, ld.UpstreamConnectTimeout, ld.UpstreamHeaderTimeout, ld.UpstreamIdleTimeout, ld.UpstreamMaxIdle, req.Id)
+		fmt.Println("updateLoadBalanceSql :", updateLoadBalanceSql)
+
+		stmt3, err := session.Prepare(updateLoadBalanceSql)
+		if err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return err
+		}
+		defer stmt3.Close()
+		if _, err := stmt3.Exec(); err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }
