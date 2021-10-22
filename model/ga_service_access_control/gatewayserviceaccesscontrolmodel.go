@@ -58,7 +58,6 @@ func (m *defaultGatewayServiceAccessControlModel) Insert(data GatewayServiceAcce
 	ret, err := m.conn.Exec(query, data.ServiceId, data.OpenAuth, data.BlackList, data.WhiteList, data.WhiteHostName, data.ClientipFlowLimit, data.ServiceFlowLimit)
 	return ret, err
 }
-
 func (m *defaultGatewayServiceAccessControlModel) FindOne(id int64) (*GatewayServiceAccessControl, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", gatewayServiceAccessControlRows, m.table)
 	var resp GatewayServiceAccessControl
@@ -85,13 +84,11 @@ func (m *defaultGatewayServiceAccessControlModel) FindOneByServiceId(serviceId i
 		return nil, err
 	}
 }
-
 func (m *defaultGatewayServiceAccessControlModel) Update(data GatewayServiceAccessControl) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceAccessControlRowsWithPlaceHolder)
 	_, err := m.conn.Exec(query, data.ServiceId, data.OpenAuth, data.BlackList, data.WhiteList, data.WhiteHostName, data.ClientipFlowLimit, data.ServiceFlowLimit, data.Id)
 	return err
 }
-
 func (m *defaultGatewayServiceAccessControlModel) Delete(id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)

@@ -33,16 +33,18 @@ type (
 
 		// 模糊查询服务信息
 		FindDataLike(info string, pageSize, pageNum int) (interface{}, error)
-
-		// 添加一个服务
-		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
-		UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
-
 		// 根据服务名查找一条数据
 		FindOneByServiceName(serviceName string) (int, error)
 
+		// 添加一个服务
+		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
+		// 更新http服务
+		UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
+
 		// 添加tcp服务
 		InsertTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error
+		// 更新tcp服务
+		UpdateTcp(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -103,6 +105,34 @@ func (m *defaultGatewayServiceInfoModel) FindOneByServiceName(serviceName string
 	}
 }
 
+// 从服务信息表中模糊查询服务信息(服务ID )
+func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pageNum int) (interface{}, error) {
+
+	if pageNum == 0 {
+		pageNum = 1
+	}
+	if pageSize == 0 {
+		pageSize = 10
+	}
+
+	var countNum int
+	countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `service_name` like ? or `service_desc` like ? AND `is_delete` = 0", m.table)
+	err := m.conn.QueryRow(&countNum, countQuery, "%"+info+"%", "%"+info+"%")
+	startNum := (pageNum - 1) * pageSize
+	query := fmt.Sprintf("select %s from %s where `service_name` like ? or `service_desc` like ?  AND `is_delete` = 0 ORDER BY `id` DESC LIMIT %d,%d", gatewayServiceInfoRows, m.table, startNum, pageSize)
+	var resp []GatewayServiceInfo
+	err = m.conn.QueryRows(&resp, query, "%"+info+"%", "%"+info+"%")
+	switch err {
+	case nil:
+		res := util.CutPage(countNum, pageNum, pageSize, resp)
+		return &res, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceInfoRowsWithPlaceHolder)
 	_, err := m.conn.Exec(query, data.LoadType, data.ServiceName, data.ServiceDesc, data.IsDelete, data.Id)
@@ -111,14 +141,73 @@ func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
 
 // 更新http服务
 func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, gatewayServiceInfoRowsWithPlaceHolder)
-	_, err := m.conn.Exec(query)
-	if err != nil {
-		fmt.Println(err)
-		//todo
 
-		return err
-	}
+	UpdateServiceSql := fmt.Sprintf("update %s set service_name = '%s',service_desc = '%s' where `id` = %d", m.table, req.ServiceName, req.ServiceDesc, req.Id)
+	fmt.Println("UpdateServiceSql", UpdateServiceSql)
+
+	err := m.conn.Transact(func(session sqlx.Session) error {
+
+		// 1.更新serviceInfo表数据
+		stmt, err := session.Prepare(UpdateServiceSql)
+		if err != nil {
+			fmt.Println("updetehttpsql:err", err)
+			return err
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec()
+		if err != nil {
+			fmt.Println("UpdateServiceSql exec", err)
+			return err
+		}
+
+		// 2.更新tcp规则表
+		UpdateTcpSql := fmt.Sprintf("update gateway_service_http_rule set rule_type = %d rule = '%s' need_https = %d need_strip_uri = %d need_websocket = %d url_rewrite = '%s' header_transfor = '%s' where `service_id` = %d ", data.RuleType, data.Rule, data.NeedHttps, data.NeedStripUri, data.NeedWebsocket, data.UrlRewrite, data.HeaderTransfor, req.Id)
+		fmt.Println("UpdateTcpSql :", UpdateTcpSql)
+
+		stmt1, err := session.Prepare(UpdateTcpSql)
+		if err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return err
+		}
+		defer stmt1.Close()
+		if _, err := stmt1.Exec(); err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return err
+		}
+
+		// 3.写入权限控制表
+		updateAccessControlSql := fmt.Sprintf("update gateway_service_access_control set open_auth = %d black_list = '%s' white_list = '%s' white_host_name = '%s' clientip_flow_limit = %d service_flow_limit = %d where `service_id` = %d", accessControl.OpenAuth, accessControl.BlackList, accessControl.WhiteList, accessControl.WhiteHostName, accessControl.ClientipFlowLimit, accessControl.ServiceFlowLimit, req.Id)
+		fmt.Println("updateAccessControlSql :", updateAccessControlSql)
+
+		stmt2, err := session.Prepare(updateAccessControlSql)
+		if err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return err
+		}
+		defer stmt2.Close()
+		if _, err := stmt2.Exec(); err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return err
+		}
+
+		// 4.写入负载均衡控制表
+		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set check_method = %d,check_timeout = %d,check_interval = %d,round_type = %d,ip_list = '%s',weight_list = '%s',forbid_list = '%s',upstream_connect_timeout = %d,upstream_header_timeout = %d,upstream_idle_timeout = %d,upstream_max_idle = %d where `service_id` = %d", loadBalance.CheckMethod, loadBalance.CheckTimeout, loadBalance.CheckInterval, loadBalance.WeightList, loadBalance.IpList, loadBalance.WeightList, loadBalance.ForbidList, loadBalance.UpstreamConnectTimeout, loadBalance.UpstreamHeaderTimeout, loadBalance.UpstreamIdleTimeout, loadBalance.UpstreamMaxIdle, req.Id)
+		fmt.Println("updateLoadBalanceSql :", updateLoadBalanceSql)
+
+		stmt3, err := session.Prepare(updateLoadBalanceSql)
+		if err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return err
+		}
+		defer stmt3.Close()
+		if _, err := stmt3.Exec(); err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return err
+		}
+
+		return nil
+	})
+
 	return err
 }
 func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
@@ -126,6 +215,9 @@ func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
 	_, err := m.conn.Exec(query, id)
 	return err
 }
+
+// 现在我要对四张表进行数据操作 但是我可能就修改一个值
+// 改动一个数据 然而对四张表进行了更新
 
 // 添加一个http服务
 func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
@@ -270,30 +362,7 @@ func (m *defaultGatewayServiceInfoModel) InsertTcpService(req GatewayServiceInfo
 	return err
 }
 
-// 从服务信息表中模糊查询服务信息(服务ID )
-func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pageNum int) (interface{}, error) {
-
-	if pageNum == 0 {
-		pageNum = 1
-	}
-	if pageSize == 0 {
-		pageSize = 10
-	}
-
-	var countNum int
-	countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `service_name` like ? or `service_desc` like ? AND `is_delete` = 0", m.table)
-	err := m.conn.QueryRow(&countNum, countQuery, "%"+info+"%", "%"+info+"%")
-	startNum := (pageNum - 1) * pageSize
-	query := fmt.Sprintf("select %s from %s where `service_name` like ? or `service_desc` like ?  AND `is_delete` = 0 ORDER BY `id` DESC LIMIT %d,%d", gatewayServiceInfoRows, m.table, startNum, pageSize)
-	var resp []GatewayServiceInfo
-	err = m.conn.QueryRows(&resp, query, "%"+info+"%", "%"+info+"%")
-	switch err {
-	case nil:
-		res := util.CutPage(countNum, pageNum, pageSize, resp)
-		return &res, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
+// 更新tcp服务
+func (m *defaultGatewayServiceInfoModel) UpdateTcp(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error {
+	return nil
 }
