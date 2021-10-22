@@ -85,6 +85,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/service/service_add_tcp",
 				Handler: serviceTcp.AddTcpHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/service/service_update_tcp",
+				Handler: serviceTcp.UpdateTcpHandler(serverCtx),
+			},
 		},
 	)
 }
