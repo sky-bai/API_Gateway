@@ -185,3 +185,42 @@ type UpdateTcpRequest struct {
 	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`    // 权重列表
 	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`                 // 禁用IP列表
 }
+
+type AddGrpcRequest struct {
+	ServiceName       string `json:"service_name"  validate:"required,valid_service_name"` // 服务名称
+	ServiceDesc       string `json:"service_desc"  validate:"required"`                    // 服务描述
+	Port              int    `json:"port"  validate:"required,min=8001,max=8999"`          // 端口，需要设置8001-8999范围内
+	HeaderTransfor    string `json:"header_transfor" validate:"valid_header_transfor"`     // metadata转换
+	OpenAuth          int    `json:"open_auth"  validate:""`                               // 是否开启权限验证
+	BlackList         string `json:"black_list"  validate:"valid_iplist"`                  // 黑名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteList         string `json:"white_list"  validate:"valid_iplist"`                  // 白名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteHostName     string `json:"white_host_name"  validate:"valid_iplist"`             // 白名单主机，以逗号间隔
+	ClientIPFlowLimit int    `json:"clientip_flow_limit"  validate:""`                     // 客户端IP限流
+	ServiceFlowLimit  int    `json:"service_flow_limit"  validate:""`                      // 服务端限流
+	RoundType         int    `json:"round_type"  validate:""`                              // 轮询策略
+	IpList            string `json:"ip_list"  validate:"required,valid_ipportlist"`        // IP列表
+	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`    // 权重列表
+	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`                 // 禁用IP列表
+}
+
+type UpdateGrpcRequest struct {
+	ID                int64  `json:"id"  validate:"required"`                              // 服务ID
+	ServiceName       string `json:"service_name"  validate:"required,valid_service_name"` // 服务名称
+	ServiceDesc       string `json:"service_desc"  validate:"required"`                    // 服务描述
+	Port              int    `json:"port"  validate:"required,min=8001,max=8999"`          // 端口，需要设置8001-8999范围内
+	HeaderTransfor    string `json:"header_transfor"  validate:"valid_header_transfor"`    // metadata转换
+	OpenAuth          int    `json:"open_auth"  validate:""`                               // 是否开启权限验证
+	BlackList         string `json:"black_list"  validate:"valid_iplist"`                  // 黑名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteList         string `json:"white_list"  validate:"valid_iplist"`                  // 白名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteHostName     string `json:"white_host_name"  validate:"valid_iplist"`             //  白名单主机，以逗号间隔
+	ClientIPFlowLimit int    `json:"clientip_flow_limit"  validate:""`                     // 客户端IP限流
+	ServiceFlowLimit  int    `json:"service_flow_limit"  validate:""`                      // 服务端限流
+	RoundType         int    `json:"round_type"  validate:""`                              // 轮询策略
+	IpList            string `json:"ip_list"  validate:"required,valid_ipportlist"`        // IP列表
+	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`    // 权重列表
+	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`                 // 禁用IP列表
+}
+
+type Reponse struct {
+	Msg string `json:"msg"`
+}

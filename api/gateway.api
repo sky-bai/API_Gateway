@@ -9,6 +9,7 @@ info(
 )
 
 import "tcp.api"
+import "grpc.api"
 
 // 登陆请求
 type LoginRequest {
