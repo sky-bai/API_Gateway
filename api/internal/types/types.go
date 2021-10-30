@@ -2,8 +2,8 @@
 package types
 
 type LoginRequest struct {
-	UserName string `json:"username" form:"username" comment:"管理员用户名"  validate:"required,valid_username"` //管理员用户名
-	Password string `json:"password" form:"password" validate:"required"`
+	UserName string `json:"username"  comment:"管理员用户名"  validate:"required"` //管理员用户名
+	Password string `json:"password"  validate:"required"`
 }
 
 type LoginReponse struct {
@@ -165,7 +165,7 @@ type AddTcpRequest struct {
 	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`
 }
 
-type Reponse struct {
+type Response struct {
 	Msg string `json:"msg"`
 }
 

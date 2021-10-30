@@ -14,3 +14,7 @@ Cluster:
   ClusterIp: "127.0.0.1"
   ClusterPort: "8080"
   ClusterSslPort: "4433"
+Http:
+  Addr: 8080
+Https:
+  Addr: 4433

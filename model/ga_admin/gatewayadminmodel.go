@@ -18,7 +18,7 @@ var (
 	gatewayAdminRowsExpectAutoSet   = strings.Join(stringx.Remove(gatewayAdminFieldNames, "`id`", "`create_time`", "`update_time`"), ",")
 	gatewayAdminRowsWithPlaceHolder = strings.Join(stringx.Remove(gatewayAdminFieldNames, "`id`", "`create_time`", "`update_time`"), "=?,") + "=?"
 
-	gatewayAdminLogin = "`password`" + "`id`"
+	gatewayAdminLogin = "`id`" + "," + "`password`"
 	updatePwd         = "`password`"
 )
 
@@ -80,7 +80,7 @@ func (m *defaultGatewayAdminModel) FindOne(id int64) (*GatewayAdmin, error) {
 
 // 通过用户名查找密码
 func (m *defaultGatewayAdminModel) FindOneByUserName(userName string) (*GatewayAdmin, error) {
-	query := fmt.Sprintf("select %s from %s where `user_name` = ? limit 1", gatewayAdminLogin, m.table)
+	query := fmt.Sprintf("select * from %s where `user_name` = ? limit 1", m.table)
 	var resp GatewayAdmin
 	err := m.conn.QueryRow(&resp, query, userName)
 	switch err {

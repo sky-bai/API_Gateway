@@ -15,7 +15,7 @@ type AddTcpRequest {
     ForbidList string `json:"forbid_list"  validate:"valid_iplist"`
 }
 
-type Reponse {
+type Response {
     Msg string `json:"msg"`
 }
 
@@ -40,9 +40,12 @@ type UpdateTcpRequest {
     group: serviceTcp
 )
 service gateway-api {
+    @handler pingpong
+    get /service/pingpong  returns (Response);
+
     @handler addTcp
-    post /service/service_add_tcp (AddTcpRequest) returns (Reponse);
+    post /service/service_add_tcp (AddTcpRequest) returns (Response);
 
     @handler updateTcp
-    post /service/service_update_tcp (UpdateTcpRequest) returns (Reponse);
+    post /service/service_update_tcp (UpdateTcpRequest) returns (Response);
 }
