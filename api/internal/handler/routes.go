@@ -82,11 +82,6 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 	engine.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/service/pingpong",
-				Handler: serviceTcp.PingpongHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodPost,
 				Path:    "/service/service_add_tcp",
 				Handler: serviceTcp.AddTcpHandler(serverCtx),

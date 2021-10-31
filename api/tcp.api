@@ -40,8 +40,6 @@ type UpdateTcpRequest {
     group: serviceTcp
 )
 service gateway-api {
-    @handler pingpong
-    get /service/pingpong  returns (Response);
 
     @handler addTcp
     post /service/service_add_tcp (AddTcpRequest) returns (Response);

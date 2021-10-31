@@ -1,6 +1,7 @@
 package serviceTcp
 
 import (
+	"API_Gateway/util/reponse"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/serviceTcp"
@@ -19,10 +20,6 @@ func UpdateTcpHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceTcp.NewUpdateTcpLogic(r.Context(), ctx)
 		resp, err := l.UpdateTcp(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }
