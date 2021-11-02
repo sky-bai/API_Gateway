@@ -1,6 +1,7 @@
 package serviceInfo
 
 import (
+	"API_Gateway/util/reponse"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/serviceInfo"
@@ -19,6 +20,6 @@ func ServiceDetailHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceDetailLogic(r.Context(), ctx)
 		resp, err := l.ServiceDetail(req)
-		reponse.Response(w, resp, err) //②
+		reponse.Response(w, resp, err)
 	}
 }
