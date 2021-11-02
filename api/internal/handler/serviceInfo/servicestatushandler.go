@@ -19,10 +19,6 @@ func ServiceStatusHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceStatusLogic(r.Context(), ctx)
 		resp, err := l.ServiceStatus(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }

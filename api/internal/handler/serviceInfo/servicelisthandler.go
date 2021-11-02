@@ -1,7 +1,6 @@
 package serviceInfo
 
 import (
-	"fmt"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/serviceInfo"
@@ -14,17 +13,12 @@ func ServiceListHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ServiceListResquest
 		if err := httpx.Parse(r, &req); err != nil {
-			fmt.Println(err)
 			httpx.Error(w, err)
 			return
 		}
 
 		l := serviceInfo.NewServiceListLogic(r.Context(), ctx)
 		resp, err := l.ServiceList(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }

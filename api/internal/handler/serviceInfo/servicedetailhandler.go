@@ -19,10 +19,6 @@ func ServiceDetailHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceDetailLogic(r.Context(), ctx)
 		resp, err := l.ServiceDetail(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }
