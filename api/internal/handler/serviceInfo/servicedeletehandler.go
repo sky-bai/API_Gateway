@@ -1,6 +1,7 @@
 package serviceInfo
 
 import (
+	"API_Gateway/util/reponse"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/serviceInfo"
@@ -19,10 +20,6 @@ func ServiceDeleteHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceDeleteLogic(r.Context(), ctx)
 		resp, err := l.ServiceDelete(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }
