@@ -224,3 +224,11 @@ type UpdateGrpcRequest struct {
 type Reponse struct {
 	Msg string `json:"msg"`
 }
+
+type PingReponse struct {
+	Message string `json:"message"` // 返回信息
+}
+
+type HttpsReponse struct {
+	Message string `json:"message"` // 返回信息
+}

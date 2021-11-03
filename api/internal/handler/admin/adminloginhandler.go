@@ -20,6 +20,6 @@ func AdminLoginHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := admin.NewAdminLoginLogic(r.Context(), ctx)
 		resp, err := l.AdminLogin(req)
-		reponse.Response(w, resp, err) //②
+		reponse.Response(w, resp, err)
 	}
 }

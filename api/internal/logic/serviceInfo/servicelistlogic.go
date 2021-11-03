@@ -73,7 +73,7 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (interface
 		//2、http域名接入 domain
 		//3、tcp、grpc接入 clusterIP+servicePort
 		serviceAddr := "unknown"
-		clusterIP := l.svcCtx.Config.Cluster.ClusterIp
+		clusterIP := l.svcCtx.Config.Cluster.ClusterIP
 		clusterPort := l.svcCtx.Config.Cluster.ClusterPort
 		clusterSSLPort := l.svcCtx.Config.Cluster.ClusterSslPort
 

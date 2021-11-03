@@ -1,0 +1,15 @@
+syntax = "v1"
+
+// pingReponse
+type PingReponse {
+    Message string `json:"message"` // 返回信息
+}
+
+
+@server(
+    group: httpProxy
+)
+service gateway-api {
+    @handler httpProxyPing
+    get /http_proxy/ping returns (PingReponse)
+}

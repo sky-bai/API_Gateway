@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	admin "API_Gateway/api/internal/handler/admin"
+	httpProxy "API_Gateway/api/internal/handler/httpProxy"
+	httpsProxy "API_Gateway/api/internal/handler/httpsProxy"
 	serviceGrpc "API_Gateway/api/internal/handler/serviceGrpc"
 	serviceInfo "API_Gateway/api/internal/handler/serviceInfo"
 	serviceTcp "API_Gateway/api/internal/handler/serviceTcp"
@@ -105,6 +107,26 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/service/service_update_grpc",
 				Handler: serviceGrpc.UpdateGrpcHandler(serverCtx),
+			},
+		},
+	)
+
+	engine.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/http_proxy/ping",
+				Handler: httpProxy.HttpProxyPingHandler(serverCtx),
+			},
+		},
+	)
+
+	engine.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/https_proxy/ping",
+				Handler: httpsProxy.HttpsProxyPingHandler(serverCtx),
 			},
 		},
 	)

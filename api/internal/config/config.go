@@ -16,8 +16,20 @@ type Config struct {
 	}
 	CacheRedis cache.CacheConf
 	Cluster    struct {
-		ClusterIp      string
+		ClusterIP      string
 		ClusterPort    string
 		ClusterSslPort string
+	}
+
+	HTTPProxy struct {
+		Name string
+		Host string
+		Port int
+	}
+
+	HTTPSProxy struct {
+		Name string
+		Host string
+		Port int
 	}
 }

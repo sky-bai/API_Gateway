@@ -8,8 +8,12 @@ info(
 	version: "type version here"
 )
 
-import "tcp.api"
-import "grpc.api"
+import (
+	"tcp.api"
+	"grpc.api"
+	"http_proxy.api"
+	"https_proxy.api"
+)
 
 // 登陆请求
 type LoginRequest {

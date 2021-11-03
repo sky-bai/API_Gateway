@@ -24,7 +24,6 @@ func NewPingLogic(ctx context.Context, svcCtx *svc.ServiceContext) PingLogic {
 }
 
 func (l *PingLogic) Ping() (*types.LogOutReponse, error) {
-	// todo: add your logic here and delete this line
 
-	return &types.LogOutReponse{"晨哥 牛逼"}, nil
+	return &types.LogOutReponse{Message: "管理服务 可以跑通"}, nil
 }
