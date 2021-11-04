@@ -7,6 +7,7 @@ import (
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_tcp_rule"
+	"API_Gateway/pkg/errcode"
 	"API_Gateway/util"
 	"context"
 	"fmt"
@@ -33,12 +34,12 @@ func NewServiceListLogic(ctx context.Context, svcCtx *svc.ServiceContext) Servic
 func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (interface{}, error) {
 
 	// 通过服务名称和服务描述模糊查询 获取到 服务ID
-	dataLike, err := l.svcCtx.GatewayServiceInfoModel.FindDataLike(req.Info, req.PageSize, req.PageNo)
+	dataLike, err := l.svcCtx.GatewayServiceInfoModel.FindDataLike(req.Info, req.PageSize, req.PageNo) // 其实查询出来的就是serviceInfo 但是我在上层进行了断言
 	if err != nil {
 		return nil, err
 	}
-	ServiceInfo := dataLike.([]ga_service_info.GatewayServiceInfo)
-
+	pa := dataLike.(*util.PageList)
+	ServiceInfo := pa.Data.([]ga_service_info.GatewayServiceInfo)
 	//for _, info := range ServiceInfo {
 	//	idList:=[]int64{}
 	//	idlist := append(idList, info.Id)
@@ -47,17 +48,18 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (interface
 	httpRule := &ga_service_http_rule.GatewayServiceHttpRule{}
 	tcpRule := &ga_service_tcp_rule.GatewayServiceTcpRule{}
 	grpcRule := &ga_service_grpc_rule.GatewayServiceGrpcRule{}
-	var data []types.ServiceListItemReponse
+
+	var data []types.ServiceListItemReponse //nolint:prealloc
 	// 拿到每个服务ID
 	for _, serviceInfo := range ServiceInfo {
 		// 负载类型 0=http 1=tcp 2=grpc
 		switch serviceInfo.LoadType {
-		case util.LoadTypeHTTP:
+		case errcode.LoadTypeHTTP:
 			httpRule, err = l.svcCtx.GatewayServiceHttpRuleModel.FindOneByServiceId(int(serviceInfo.Id))
 			if err != nil {
 				return nil, err
 			}
-		case util.LoadTypeTCP:
+		case errcode.LoadTypeTCP:
 			tcpRule, err = l.svcCtx.GatewayServiceTcpRuleModel.FindOneByServiceId(int(serviceInfo.Id))
 			if err != nil {
 				return nil, err
@@ -77,26 +79,26 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (interface
 		clusterPort := l.svcCtx.Config.Cluster.ClusterPort
 		clusterSSLPort := l.svcCtx.Config.Cluster.ClusterSslPort
 
-		if serviceInfo.LoadType == util.LoadTypeHTTP &&
-			httpRule.RuleType == util.HTTPRuleTypePrefixURL &&
+		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
+			httpRule.RuleType == errcode.HTTPRuleTypePrefixURL &&
 			httpRule.NeedHttps == 1 {
 			serviceAddr = fmt.Sprintf("%s:%s%s", clusterIP, clusterSSLPort, httpRule.Rule)
 		}
 
-		if serviceInfo.LoadType == util.LoadTypeHTTP &&
-			httpRule.RuleType == util.HTTPRuleTypePrefixURL &&
+		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
+			httpRule.RuleType == errcode.HTTPRuleTypePrefixURL &&
 			httpRule.NeedHttps == 0 {
 			serviceAddr = fmt.Sprintf("%s:%s%s", clusterIP, clusterPort, httpRule.Rule)
 		}
 
-		if serviceInfo.LoadType == util.LoadTypeHTTP &&
-			httpRule.RuleType == util.HTTPRuleTypeDomain {
+		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
+			httpRule.RuleType == errcode.HTTPRuleTypeDomain {
 			serviceAddr = httpRule.Rule
 		}
-		if serviceInfo.LoadType == util.LoadTypeTCP {
+		if serviceInfo.LoadType == errcode.LoadTypeTCP {
 			serviceAddr = fmt.Sprintf("%s:%d", clusterIP, tcpRule.Port)
 		}
-		if serviceInfo.LoadType == util.LoadTypeGRPC {
+		if serviceInfo.LoadType == errcode.LoadTypeGRPC {
 			serviceAddr = fmt.Sprintf("%s:%d", clusterIP, grpcRule.Port)
 
 		}

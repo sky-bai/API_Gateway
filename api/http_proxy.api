@@ -8,6 +8,7 @@ type PingReponse {
 
 @server(
     group: httpProxy
+    middleware: HTTPAccessMode
 )
 service gateway-api {
     @handler httpProxyPing

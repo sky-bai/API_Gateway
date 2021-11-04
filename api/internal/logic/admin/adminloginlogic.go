@@ -3,7 +3,7 @@ package admin
 import (
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
-	"API_Gateway/util"
+	"API_Gateway/pkg/errcode"
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -39,12 +39,12 @@ func (l *AdminLoginLogic) AdminLogin(req types.LoginRequest) (*types.LoginRepons
 	adminInfo, err := l.svcCtx.GatewayAdminModel.FindOneByUserName(req.UserName)
 	if err != nil {
 		fmt.Println("查询数据库err :", err)
-		return nil, util.NewErrCode(util.UserNotFound)
+		return nil, errcode.NewErrCode(errcode.UserNotFound)
 	}
 
 	// 匹配密码
 	if req.Password == adminInfo.Password {
-		return nil, util.NewErrCode(util.UserErrpPwd)
+		return nil, errcode.NewErrCode(errcode.UserErrpPwd)
 	}
 
 	// ---start---
@@ -52,7 +52,7 @@ func (l *AdminLoginLogic) AdminLogin(req types.LoginRequest) (*types.LoginRepons
 	accessExpire := l.svcCtx.Config.Auth.AccessExpire
 	jwtToken, err := l.getJwtToken(l.svcCtx.Config.Auth.AccessSecret, now, l.svcCtx.Config.Auth.AccessExpire, adminInfo.Id)
 	if err != nil {
-		return nil, util.NewErrCode(util.UserTokenFailSet)
+		return nil, errcode.NewErrCode(errcode.UserTokenFailSet)
 	}
 	// 生成了用户token
 

@@ -112,13 +112,16 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	engine.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/http_proxy/ping",
-				Handler: httpProxy.HttpProxyPingHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/ping",
+					Handler: httpProxy.HttpProxyPingHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 
 	engine.AddRoutes(

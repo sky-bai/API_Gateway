@@ -8,13 +8,12 @@ import (
 	"API_Gateway/util"
 	"database/sql"
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/tal-tech/go-zero/core/stores/sqlc"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
 	"github.com/tal-tech/go-zero/core/stringx"
 	"github.com/tal-tech/go-zero/tools/goctl/model/sql/builderx"
+	"strings"
+	"time"
 )
 
 var (
@@ -31,19 +30,23 @@ type (
 		Update(data GatewayServiceInfo) error
 		Delete(id int64) error
 
-		// 模糊查询服务信息
+		// FindDataLike 模糊查询服务信息
 		FindDataLike(info string, pageSize, pageNum int) (interface{}, error)
-		// 根据服务名查找一条数据
+
+		// FindOneByServiceName 根据服务名查找一条数据
 		FindOneByServiceName(serviceName string) (int, error)
 
-		// 添加一个服务
+		// FindAll 获取所有服务信息
+		FindAll(info string, pageSize, pageNum int) (interface{}, error)
+
+		// InsertData 添加一个服务
 		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
-		// 更新http服务
+		// UpdateDate 更新http服务
 		UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
 
-		// 添加tcp服务
+		// InsertTcpService 添加tcp服务
 		InsertTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error
-		// 更新tcp服务
+		// UpdateTcp 更新tcp服务
 		UpdateTcp(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
@@ -432,4 +435,49 @@ func (m *defaultGatewayServiceInfoModel) UpdateTcp(req GatewayServiceInfo, data 
 	})
 
 	return err
+}
+
+// FindAll 获取所有服务信息
+func (m *defaultGatewayServiceInfoModel) FindAll(info string, pageSize, pageNum int) (interface{}, error) {
+	if pageNum == 0 {
+		pageNum = 1
+	}
+	if pageSize == 0 {
+		pageSize = 10
+	}
+	var countNum int
+	startNum := (pageNum - 1) * pageSize
+	var resp []GatewayServiceInfo
+	if info == "" {
+		countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `is_delete` = 0", m.table)
+		err := m.conn.QueryRow(&countNum, countQuery)
+
+		query := fmt.Sprintf("select %s from %s where `is_delete` = 0 ORDER BY `id` DESC LIMIT %d,%d", gatewayServiceInfoRows, m.table, startNum, pageSize)
+		err = m.conn.QueryRows(&resp, query)
+		switch err {
+		case nil:
+			res := util.CutPage(countNum, pageNum, pageSize, resp)
+			return &res, nil
+		case sqlc.ErrNotFound:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `service_name` like ? or `service_desc` like ? AND `is_delete` = 0", m.table)
+	err := m.conn.QueryRow(&countNum, countQuery, "%"+info+"%", "%"+info+"%")
+
+	query := fmt.Sprintf("select %s from %s where `service_name` like ? or `service_desc` like ?  AND `is_delete` = 0 ORDER BY `id` DESC LIMIT %d,%d", gatewayServiceInfoRows, m.table, startNum, pageSize)
+	err = m.conn.QueryRows(&resp, query, "%"+info+"%", "%"+info+"%")
+
+	switch err {
+	case nil:
+		res := util.CutPage(countNum, pageNum, pageSize, resp)
+		return &res, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }

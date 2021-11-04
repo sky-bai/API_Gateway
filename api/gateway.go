@@ -4,6 +4,7 @@ import (
 	"API_Gateway/api/internal/config"
 	"API_Gateway/api/internal/config/cert_file"
 	"API_Gateway/api/internal/handler"
+	"API_Gateway/api/internal/http_proxy_router"
 	"API_Gateway/api/internal/svc"
 	"flag"
 	"fmt"
@@ -19,6 +20,7 @@ func main() {
 	// 1.读取配置文件到结构体中
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	fmt.Println(*configFile)
 
 	// 配置数据库
 	ctx := svc.NewServiceContext(c)
@@ -26,6 +28,8 @@ func main() {
 
 	// 2.启动http代理服务
 	go func() {
+		new(http_proxy_router.ServiceManager).LoadOnce()
+
 		c1 := c
 		c1.RestConf.Name = c.HTTPProxy.Name
 		c1.RestConf.Host = c.HTTPProxy.Host
