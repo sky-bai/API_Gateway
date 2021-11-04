@@ -2,7 +2,7 @@ package admin
 
 import (
 	"API_Gateway/model/ga_admin"
-	"API_Gateway/util"
+	"API_Gateway/pkg/errcode"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -46,7 +46,7 @@ func (l *AdminChangePwdLogic) AdminChangePwd(req types.FixPwdRequest) (*types.Fi
 	err := l.svcCtx.GatewayAdminModel.UpdatePwd(data)
 	if err != nil {
 		fmt.Println("查询数据库err :", err)
-		return nil, util.NewErrCode(util.UserNotFound)
+		return nil, errcode.NewErrCode(errcode.UserNotFound)
 	}
 
 	return &types.FixPwdReponse{Msg: "修改成功"}, nil
