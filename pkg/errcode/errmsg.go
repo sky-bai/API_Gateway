@@ -1,4 +1,4 @@
-package util
+package errcode
 
 var message = map[int]string{
 	//成功返回

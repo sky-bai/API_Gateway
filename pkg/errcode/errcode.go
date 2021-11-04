@@ -1,4 +1,4 @@
-package util
+package errcode
 
 const (
 	// OK 成功返回
