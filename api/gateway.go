@@ -16,7 +16,7 @@ var configFile = flag.String("f", "etc/gateway-api.yaml", "the config file")
 
 func main() {
 	flag.Parse()
-
+	*configFile = "etc/gateway-api.yaml"
 	// 1.读取配置文件到结构体中
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
