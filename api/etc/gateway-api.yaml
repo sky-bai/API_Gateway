@@ -1,8 +1,8 @@
 Name: gateway-api
-Host: 127.0.0.1
+Host: 0.0.0.0
 Port: 8887
 Mysql:
-  DataSource: root:12345678@tcp(127.0.0.1:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:12345678@tcp(121.196.163.8:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 CacheRedis:
   - Host: $host
     Pass: $pass
@@ -17,11 +17,11 @@ Cluster:
 
 HTTPProxy:
   Name: "http_proxy"
-  Host: "127.0.0.1"
+  Host: "0.0.0.0"
   Port: 8080
 
 HTTPSProxy:
   Name: "http_proxy"
-  Host: "127.0.0.1"
+  Host: "0.0.0.0"
   Port: 4433
 
