@@ -113,7 +113,7 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 
 	engine.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.HTTPAccessMode},
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPReverseProxy},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,

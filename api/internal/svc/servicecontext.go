@@ -23,7 +23,7 @@ type ServiceContext struct {
 	GatewayServiceTcpRuleModel       ga_service_tcp_rule.GatewayServiceTcpRuleModel
 	GatewayServiceAccessControlModel ga_service_access_control.GatewayServiceAccessControlModel
 	GatewayServiceLoadBalanceModel   ga_service_load_balance.GatewayServiceLoadBalanceModel
-	HTTPAccessMode                   rest.Middleware
+	HTTPAccessMode, HTTPReverseProxy rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,5 +39,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GatewayServiceAccessControlModel: ga_service_access_control.NewGatewayServiceAccessControlModel(conn),
 		GatewayServiceLoadBalanceModel:   ga_service_load_balance.NewGatewayServiceLoadBalanceModel(conn),
 		HTTPAccessMode:                   middleware.NewHTTPAccessModeMiddleware().Handle,
+		HTTPReverseProxy:                 middleware.NewHTTPReverseProxyMiddleware().Handle,
 	}
 }

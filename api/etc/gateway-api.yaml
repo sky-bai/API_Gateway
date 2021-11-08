@@ -11,10 +11,17 @@ Auth:
   AccessSecret: jkljkljkljkljkljkl
   AccessExpire: 7200
 Cluster:
-  ClusterIp: "127.0.0.1"
+  ClusterIP: "127.0.0.1"
   ClusterPort: "8080"
   ClusterSslPort: "4433"
-Http:
-  Addr: 8080
-Https:
-  Addr: 4433
+
+HTTPProxy:
+  Name: "http_proxy"
+  Host: "127.0.0.1"
+  Port: 8080
+
+HTTPSProxy:
+  Name: "http_proxy"
+  Host: "127.0.0.1"
+  Port: 4433
+
