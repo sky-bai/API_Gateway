@@ -36,8 +36,11 @@ type (
 		// FindOneByServiceName 根据服务名查找一条数据
 		FindOneByServiceName(serviceName string) (int, error)
 
-		// FindAll 获取所有服务信息
+		// FindAll 查询获取所有服务信息
 		FindAll(info string, pageSize, pageNum int) (interface{}, error)
+
+		// FindAllTotal 直接获取所有服务信息不分页
+		FindAllTotal() (interface{}, error)
 
 		// InsertData 添加一个服务
 		InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error
@@ -63,6 +66,12 @@ type (
 		CreateTime  time.Time `db:"create_time"`  // 添加时间
 		UpdateTime  time.Time `db:"update_time"`  // 更新时间
 		IsDelete    int64     `db:"is_delete"`    // 是否删除 1=删除 0=未删除
+	}
+
+	ServiceInfo struct {
+		Id          int64  `db:"id"`           // 自增主键
+		LoadType    int64  `db:"load_type"`    // 负载类型 0=http 1=tcp 2=grpc
+		ServiceName string `db:"service_name"` // 服务名称 6-128 数字字母下划线
 	}
 )
 
@@ -93,7 +102,7 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 	}
 }
 
-// 根据服务名查找一条数据
+// FindOneByServiceName 根据服务名查找一条数据
 func (m *defaultGatewayServiceInfoModel) FindOneByServiceName(serviceName string) (int, error) {
 	query := fmt.Sprintf("select id from %s where `service_name` = ? limit 1", m.table)
 	var resp int
@@ -108,7 +117,7 @@ func (m *defaultGatewayServiceInfoModel) FindOneByServiceName(serviceName string
 	}
 }
 
-// 从服务信息表中模糊查询服务信息(服务ID )
+// FindDataLike 从服务信息表中模糊查询服务信息(服务ID )
 func (m *defaultGatewayServiceInfoModel) FindDataLike(info string, pageSize, pageNum int) (interface{}, error) {
 
 	if pageNum == 0 {
@@ -142,7 +151,7 @@ func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
 	return err
 }
 
-// 更新http服务
+// UpdateDate 更新http服务
 func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
 
 	UpdateServiceSql := fmt.Sprintf("update %s set service_name = '%s',service_desc = '%s' where `id` = %d", m.table, req.ServiceName, req.ServiceDesc, req.Id)
@@ -223,7 +232,7 @@ func (m *defaultGatewayServiceInfoModel) Delete(id int64) error {
 // 现在我要对四张表进行数据操作 但是我可能就修改一个值
 // 改动一个数据 然而对四张表进行了更新
 
-// 添加一个http服务
+// InsertData 添加一个http服务
 func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data ga_service_http_rule.GatewayServiceHttpRule, accessControl ga_service_access_control.GatewayServiceAccessControl, loadBalance ga_service_load_balance.GatewayServiceLoadBalance) error {
 
 	insertServiceSql := fmt.Sprintf("insert into %s (%s) values (%d,'%s','%s',%d)", m.table, gatewayServiceInfoRowsExpectAutoSet, 0, req.ServiceName, req.ServiceDesc, 0)
@@ -297,7 +306,7 @@ func (m *defaultGatewayServiceInfoModel) InsertData(req GatewayServiceInfo, data
 	return err
 }
 
-// 添加一条tcp服务
+// InsertTcpService 添加一条tcp服务
 func (m *defaultGatewayServiceInfoModel) InsertTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error {
 	insertServiceSql := fmt.Sprintf("insert into %s (%s) values (%d,'%s','%s',%d)", m.table, gatewayServiceInfoRowsExpectAutoSet, 1, req.ServiceName, req.ServiceDesc, 0)
 	fmt.Println("insertServiceSql", insertServiceSql)
@@ -366,7 +375,7 @@ func (m *defaultGatewayServiceInfoModel) InsertTcpService(req GatewayServiceInfo
 	return err
 }
 
-// 更新tcp服务
+// UpdateTcp 更新tcp服务
 func (m *defaultGatewayServiceInfoModel) UpdateTcp(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, ld ga_service_load_balance.GatewayServiceLoadBalance) error {
 	UpdateServiceSql := fmt.Sprintf("update %s set service_name = '%s',service_desc = '%s' where `id` = %d", m.table, req.ServiceName, req.ServiceDesc, req.Id)
 	fmt.Println("UpdateServiceSql", UpdateServiceSql)
@@ -437,7 +446,7 @@ func (m *defaultGatewayServiceInfoModel) UpdateTcp(req GatewayServiceInfo, data 
 	return err
 }
 
-// FindAll 获取所有服务信息
+// FindAll 查询获取所有服务信息
 func (m *defaultGatewayServiceInfoModel) FindAll(info string, pageSize, pageNum int) (interface{}, error) {
 	if pageNum == 0 {
 		pageNum = 1
@@ -475,6 +484,21 @@ func (m *defaultGatewayServiceInfoModel) FindAll(info string, pageSize, pageNum 
 	case nil:
 		res := util.CutPage(countNum, pageNum, pageSize, resp)
 		return &res, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// FindAllTotal 直接获取所有服务信息不分页
+func (m *defaultGatewayServiceInfoModel) FindAllTotal() (interface{}, error) {
+	query := fmt.Sprintf("select * from %s", m.table)
+	var resp []GatewayServiceInfo
+	err := m.conn.QueryRows(&resp, query)
+	switch err {
+	case nil:
+		return resp, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:

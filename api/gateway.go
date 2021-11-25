@@ -1,11 +1,13 @@
 package main
 
 import (
-	"API_Gateway/api/internal/config"
-	"API_Gateway/api/internal/config/cert_file"
-	"API_Gateway/api/internal/handler"
-	"API_Gateway/api/internal/http_proxy_router"
-	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/interna/config"
+	"API_Gateway/api/interna/config/cert_file"
+	"API_Gateway/api/interna/handler"
+	"API_Gateway/api/interna/http_proxy_router"
+	"API_Gateway/api/interna/svc"
+	"API_Gateway/model/global"
+	_ "API_Gateway/model/global"
 	"flag"
 	"fmt"
 	"github.com/tal-tech/go-zero/core/conf"
@@ -20,12 +22,15 @@ func main() {
 	// 1.读取配置文件到结构体中
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	fmt.Println(*configFile)
+	//fmt.Println(*configFile)
 
 	// 配置数据库
 	ctx := svc.NewServiceContext(c)
 	server := rest.MustNewServer(c.RestConf)
 
+	h1 := global.NewServiceManager(ctx)
+	global.ServiceManagerHandler = h1
+	global.First()
 	// 2.启动http代理服务
 	go func() {
 		new(http_proxy_router.ServiceManager).LoadOnce()
