@@ -37,9 +37,10 @@ func init() {
 		return
 	}
 	for _, detail := range s1.ServiceSlice {
+		fmt.Println("detail", detail.Info)
 		global.SerInfo = append(global.SerInfo, detail)
 	}
-	//fmt.Println("hahaha👌", global.SerInfo)
+	fmt.Println("hahaha👌", global.SerInfo)
 }
 
 // ServiceDetail 如何新的结构体去获得数据库的权限
@@ -197,6 +198,7 @@ func (s *ServiceManager) LoadOnce() error {
 
 		serviceInfo := serviceInfoList.([]ga_service_info.GatewayServiceInfo)
 		for _, service := range serviceInfo {
+			fmt.Println("👌service", service.Id)
 			switch service.LoadType {
 			case errcode.LoadTypeHTTP:
 				httpRule, err = ctx.GatewayServiceHttpRuleModel.FindOneByServiceId(int(service.Id))
@@ -229,12 +231,12 @@ func (s *ServiceManager) LoadOnce() error {
 				return
 			}
 			s1 := &global.ServiceDetail{
-				Info:          &service,
-				HTTPRule:      httpRule,
-				TCPRule:       tcpRule,
-				GRPCRule:      grpcRule,
-				LoadBalance:   loadBalance,
-				AccessControl: accessControl,
+				Info:          service,
+				HTTPRule:      *httpRule,
+				TCPRule:       *tcpRule,
+				GRPCRule:      *grpcRule,
+				LoadBalance:   *loadBalance,
+				AccessControl: *accessControl,
 			}
 			s.ServiceMap[service.ServiceName] = s1
 			s.ServiceSlice = append(s.ServiceSlice, *s1)
@@ -244,7 +246,7 @@ func (s *ServiceManager) LoadOnce() error {
 	return s.err
 }
 
-//HTTPAccessMode 前端请求 与后端http服务 想对接
+// HTTPAccessMode 前端请求 与后端http服务 想对接
 func (s *ServiceManager) HTTPAccessMode(r *http.Request) (*global.ServiceDetail, error) {
 	//1、前缀匹配 /abc ==> serviceSlice.rule
 	//2、域名匹配 www.test.com ==> serviceSlice.rule

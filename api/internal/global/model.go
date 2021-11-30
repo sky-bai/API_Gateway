@@ -12,12 +12,12 @@ import (
 var SerInfo []ServiceDetail
 
 type ServiceDetail struct {
-	Info          *ga_service_info.GatewayServiceInfo                    `json:"info" description:"基本信息"`
-	HTTPRule      *ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
-	TCPRule       *ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
-	GRPCRule      *ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
-	LoadBalance   *ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
-	AccessControl *ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
+	Info          ga_service_info.GatewayServiceInfo                    `json:"info" description:"基本信息"`
+	HTTPRule      ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
+	TCPRule       ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
+	GRPCRule      ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
+	LoadBalance   ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
+	AccessControl ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
 }
 
 //

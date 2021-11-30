@@ -25,10 +25,10 @@ type (
 		Update(data GatewayServiceHttpRule) error
 		Delete(id int64) error
 
-		// 根据服务ID去查出一条http数据
+		// FindOneByServiceId 根据服务ID去查出一条http数据
 		FindOneByServiceId(serviceId int) (*GatewayServiceHttpRule, error)
 
-		// 根据ruleType(匹配类型) 和 rule规则查找数据
+		// FindOneByRule 根据ruleType(匹配类型) 和 rule规则查找数据
 		FindOneByRule(ruleType int, rule string) (*GatewayServiceHttpRule, error)
 	}
 
