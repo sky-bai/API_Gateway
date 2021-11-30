@@ -92,7 +92,7 @@ func (m *defaultGatewayServiceHttpRuleModel) FindOneByRule(ruleType int, rule st
 	}
 }
 
-// 根据服务ID去查出一条http数据
+// FindOneByServiceId 根据服务ID去查出一条http数据
 func (m *defaultGatewayServiceHttpRuleModel) FindOneByServiceId(serviceId int) (*GatewayServiceHttpRule, error) {
 	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceHttpRuleRows, m.table)
 	var resp GatewayServiceHttpRule
