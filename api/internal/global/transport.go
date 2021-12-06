@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
-var TransportHandler *http.Transport
+var TransportHandler *Transport
+
+func init() {
+	TransportHandler = NewTransport()
+}
 
 // TransportItem 每一个服务对应一个连接池
 type TransportItem struct {

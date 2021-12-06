@@ -37,6 +37,8 @@ func NewLoadBalancer() *LoadBalancer {
 func init() {
 	LoadBalanceHandler = NewLoadBalancer()
 }
+
+// GetLoadBalancer  这里会根据当前请求在数据库配置 去获取对应的负载均衡配置
 func (lbr *LoadBalancer) GetLoadBalancer(service ServiceDetail) (load_balance.LoadBalance, error) {
 	for _, item := range lbr.LoadBalanceSlice {
 		if item.ServiceName == service.Info.ServiceName {
@@ -53,10 +55,15 @@ func (lbr *LoadBalancer) GetLoadBalancer(service ServiceDetail) (load_balance.Lo
 		prefix = strconv.FormatInt(service.HTTPRule.RuleType, 10)
 	}
 
-	mConf, err := load_balance.NewLoadBalanceCheckConf(fmt.Sprintf("%s://%s%s", schema, prefix), map[string]string{"127.0.0.1:2003": "20", "127.0.0.1:2004": "20"})
-	if err != nil {
-		panic(err)
+	ipConf := make(map[string]string, 0)
+	for key, ip := range service.LoadBalance.IpList {
+		ipConf[string(ip)] = string(service.LoadBalance.WeightList[key])
 	}
+	mConf, err := load_balance.NewLoadBalanceCheckConf(fmt.Sprintf("%s://%s%s", schema, prefix), ipConf)
+	if err != nil {
+		return nil, err
+	}
+	// 把自己需要的负载均衡算法和负载均衡配置传入
 	rb := load_balance.LoadBalanceFactorWithConf(load_balance.LbWeightRoundRobin, mConf)
 	fmt.Println(rb)
 	return nil, nil
