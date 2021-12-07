@@ -26,7 +26,7 @@ func NewAdminLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) AdminLo
 	}
 }
 
-// 用户登陆
+// AdminLogin 用户登陆
 func (l *AdminLoginLogic) AdminLogin(req types.LoginRequest) (*types.LoginReponse, error) {
 	validate := validator.New()
 	// 通过validate去验证结构体
