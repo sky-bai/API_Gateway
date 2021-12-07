@@ -4,6 +4,7 @@ import (
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
 	"context"
+	"encoding/json"
 
 	"github.com/tal-tech/go-zero/core/logx"
 )
@@ -22,8 +23,25 @@ func NewAdminInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) AdminInf
 	}
 }
 
-// 获取用户信息
-func (l *AdminInfoLogic) AdminInfo() (*types.AdminInfoReponse, error) {
+// AdminInfo 获取用户信息
+func (l *AdminInfoLogic) AdminInfo() (interface{}, error) {
 
-	return &types.AdminInfoReponse{}, nil
+	value := l.ctx.Value("userId")
+	userId, _ := value.(json.Number).Int64()
+
+	adminInfo, err := l.svcCtx.GatewayAdminModel.FindOne(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	out := types.AdminInfoReponse{
+		ID:           int(adminInfo.Id),
+		Name:         adminInfo.UserName,
+		LoginTime:    int(adminInfo.CreateAt.Unix()),
+		Avatar:       "https://wpimg.wallstcn.com/f778738c-e4f8-4670-b634-56703b4acafe.gif",
+		Introduction: "I am a super administrator",
+		Roles:        []string{"admin"},
+	}
+
+	return out, nil
 }
