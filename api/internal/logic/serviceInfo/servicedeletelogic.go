@@ -23,11 +23,11 @@ func NewServiceDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) Serv
 	}
 }
 
-// 服务删除
+// ServiceDelete 服务删除
 func (l *ServiceDeleteLogic) ServiceDelete(req types.ServiceResquest) (*types.CommonReponse, error) {
 	err := l.svcCtx.GatewayServiceInfoModel.Delete(req.ID)
 	if err != nil {
 		return nil, err
 	}
-	return &types.CommonReponse{}, nil
+	return &types.CommonReponse{Msg: "删除成功"}, nil
 }
