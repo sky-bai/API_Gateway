@@ -1,19 +1,21 @@
 package serviceInfo
 
 import (
+	"API_Gateway/api/internal/middleware"
+	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/internal/types"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
-
-	"API_Gateway/api/internal/svc"
-	"API_Gateway/api/internal/types"
-
+	ut "github.com/go-playground/universal-translator"
 	"github.com/tal-tech/go-zero/core/logx"
+	"gopkg.in/go-playground/validator.v9"
+	"strings"
 )
 
 type ServiceAddHttpLogic struct {
@@ -30,17 +32,30 @@ func NewServiceAddHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) Ser
 	}
 }
 
-// 添加http服务
+var uni *ut.UniversalTranslator
+
+// ServiceAddHttp 添加http服务
 func (l *ServiceAddHttpLogic) ServiceAddHttp(req types.AddHTTPResquest) (*types.CommonReponse, error) {
 
-	fmt.Println(req)
+	err := middleware.Val.Struct(req)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		fmt.Println(errs.Translate(middleware.Trans))
+		errInfo, err := json.Marshal(errs.Translate(middleware.Trans))
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.New(string(errInfo))
+	}
 
 	// 需要根据rule 和 ruleType 判断是否有已存在的服务
-	rule, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOneByRule(req.RuleType, req.Rule)
+	serviceID, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOneByRule(req.RuleType, req.Rule)
 	if err != nil {
+		fmt.Println("err", err)
 		return nil, err
 	}
-	if rule.Id > 0 {
+	if serviceID > 0 {
 		return nil, errors.New("该http服务已存在")
 	}
 
@@ -79,6 +94,7 @@ func (l *ServiceAddHttpLogic) ServiceAddHttp(req types.AddHTTPResquest) (*types.
 	loadBalance.UpstreamIdleTimeout = int64(req.UpstreamIdleTimeout)
 	loadBalance.UpstreamMaxIdle = int64(req.UpstreamMaxIdle)
 
+	fmt.Println("---------")
 	err = l.svcCtx.GatewayServiceInfoModel.InsertData(serviceInfo, httpRule, accessControl, loadBalance)
 
 	if err != nil {
