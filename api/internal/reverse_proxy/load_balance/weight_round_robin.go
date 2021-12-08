@@ -2,7 +2,9 @@ package load_balance
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 type WeightNode struct {
@@ -17,19 +19,25 @@ type WeightRoundRobinBalance struct {
 	curIndex int
 	rss      []*WeightNode
 	rsw      int
-	conf     LoadBalanceZkConfInterface
+	conf     LoadBalanceConfInterface
 }
 
 func (w *WeightRoundRobinBalance) Get(s string) (string, error) {
-	panic("implement me")
+	return w.Next(), nil
 }
 
-func (w *WeightRoundRobinBalance) SetConf(conf LoadBalanceZkConfInterface) {
+func (w *WeightRoundRobinBalance) SetConf(conf LoadBalanceConfInterface) {
 	w.conf = conf
 }
 
 func (w *WeightRoundRobinBalance) Update() {
-	panic("implement me")
+	if conf, ok := w.conf.(*LoadBalanceCheckConfig); ok {
+		fmt.Println("WeightRoundRobinBalance get check conf:", conf.GetConf())
+		w.rss = nil
+		for _, ip := range conf.GetConf() {
+			w.Add(strings.Split(ip, ",")...)
+		}
+	}
 }
 
 // 每个节点的weight 是固定的 所以totalWeight 也是不变的
