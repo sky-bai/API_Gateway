@@ -40,11 +40,11 @@ func (t *Transport) GetTrans(service *ServiceDetail) (*http.Transport, error) {
 	}
 	trans := &http.Transport{
 		DialContext: (&net.Dialer{
-			Timeout: time.Duration(service.LoadBalance.UpstreamConnectTimeout),
+			Timeout: time.Duration(service.LoadBalance.UpstreamConnectTimeout) * time.Second,
 		}).DialContext,
 		MaxIdleConns:          int(service.LoadBalance.UpstreamMaxIdle),
-		IdleConnTimeout:       time.Duration(service.LoadBalance.UpstreamIdleTimeout),
-		ResponseHeaderTimeout: time.Duration(service.LoadBalance.UpstreamHeaderTimeout)}
+		IdleConnTimeout:       time.Duration(service.LoadBalance.UpstreamIdleTimeout) * time.Second,
+		ResponseHeaderTimeout: time.Duration(service.LoadBalance.UpstreamHeaderTimeout) * time.Second}
 
 	TranItem := &TransportItem{
 		Transport:   trans,
