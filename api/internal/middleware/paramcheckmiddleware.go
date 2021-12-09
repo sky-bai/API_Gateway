@@ -38,10 +38,9 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		Val.RegisterTranslation("required", Trans, func(ut ut.Translator) error {
-			return ut.Add("required", "{0} must have a value!", true) // see universal-translator for details
+			return ut.Add("required", "{0} 该字段不能为空!", true) // see universal-translator for details
 		}, func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("required", fe.Field())
-
 			return t
 		})
 
@@ -56,16 +55,15 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		Val.RegisterValidation("valid_username", func(fl validator.FieldLevel) bool {
 			return fl.Field().String() == "admin"
 		})
-		Val.RegisterValidation("valid_service_name", func(fl validator.FieldLevel) bool {
-			fmt.Println("执行验证valid_service_name操作")
-			matched, _ := regexp.Match(`^[a-zA-Z0-9_]{6,128}$`, []byte(fl.Field().String()))
+		Val.RegisterValidation("valid_service_name", func(fl validator.FieldLevel) bool { // `^[a-zA-Z0-9_】$`
+			matched, _ := regexp.Match(`^[a-zA-Z0-9_]{6,128}$`, []byte(fl.Field().String())) // 规定只能数字字母下划线 所以加^$
 			return matched
 		})
 		Val.RegisterValidation("valid_rule", func(fl validator.FieldLevel) bool {
-			matched, _ := regexp.Match(`^\S+$`, []byte(fl.Field().String()))
+			matched, _ := regexp.Match(`^\S+$`, []byte(fl.Field().String())) // 非空 \S 非空白符 不能有空白符
 			return matched
 		})
-		Val.RegisterValidation("valid_url_rewrite", func(fl validator.FieldLevel) bool {
+		Val.RegisterValidation("valid_url_rewrite", func(fl validator.FieldLevel) bool { // 如果是空字符串就不进行校验
 			if fl.Field().String() == "" {
 				return true
 			}
@@ -91,7 +89,7 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			for _, ms := range strings.Split(fl.Field().String(), ",") {
 				if matched, _ := regexp.Match(`^\S+\:\d+$`, []byte(ms)); !matched {
 					return false
-				}
+				} // /d 0-9
 			}
 			return true
 		})
@@ -100,7 +98,7 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				return true
 			}
 			for _, item := range strings.Split(fl.Field().String(), ",") {
-				matched, _ := regexp.Match(`\S+`, []byte(item)) //ip_addr
+				matched, _ := regexp.Match(`^\S+\:\d+$`, []byte(item)) //ip_addr  `^\S\:\d+$`
 				if !matched {
 					return false
 				}
@@ -108,7 +106,7 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return true
 		})
 		Val.RegisterValidation("valid_weightlist", func(fl validator.FieldLevel) bool {
-			fmt.Println(fl.Field().String())
+
 			for _, ms := range strings.Split(fl.Field().String(), ",") {
 				if matched, _ := regexp.Match(`^\d+$`, []byte(ms)); !matched {
 					return false
@@ -132,7 +130,7 @@ func (m *ParamCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return t
 		})
 		Val.RegisterTranslation("valid_rule", Trans, func(ut ut.Translator) error {
-			return ut.Add("valid_rule", "{0} 必须是非空字符", true)
+			return ut.Add("valid_rule", "{0} 需要填写", true)
 		}, func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("valid_rule", fe.Field())
 			return t

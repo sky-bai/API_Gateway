@@ -9,7 +9,6 @@ import (
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	ut "github.com/go-playground/universal-translator"
@@ -34,19 +33,25 @@ func NewServiceAddHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) Ser
 
 var uni *ut.UniversalTranslator
 
+type ErrorString struct {
+	errMessage string
+}
+
+func (e *ErrorString) Error() string {
+	return e.errMessage
+}
+
 // ServiceAddHttp 添加http服务
 func (l *ServiceAddHttpLogic) ServiceAddHttp(req types.AddHTTPResquest) (*types.CommonReponse, error) {
+	errMessage := ErrorString{errMessage: ""}
 
 	err := middleware.Val.Struct(req)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		fmt.Println(errs.Translate(middleware.Trans))
-		errInfo, err := json.Marshal(errs.Translate(middleware.Trans))
-		if err != nil {
-			return nil, err
+		for _, errValue := range errs.Translate(middleware.Trans) {
+			errMessage.errMessage += " " + errValue
 		}
-
-		return nil, errors.New(string(errInfo))
+		return nil, &errMessage
 	}
 
 	// 需要根据rule 和 ruleType 判断是否有已存在的服务
