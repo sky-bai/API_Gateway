@@ -74,7 +74,7 @@ type AddHTTPResquest struct {
 	ServiceName            string `json:"service_name" validate:"valid_service_name"`        //服务名
 	ServiceDesc            string `json:"service_desc" validate:"required,max=255,min=1"`    //服务描述
 	RuleType               int    `json:"rule_type" validate:"max=1,min=0"`                  //接入类型
-	Rule                   string `json:"rule"  validate:"required"`                         //域名或者前缀
+	Rule                   string `json:"rule"  validate:"required,valid_rule"`              //域名或者前缀
 	NeedHttps              int    `json:"need_https" validate:"max=1,min=0"`                 //支持https
 	NeedStripUri           int    `json:"need_strip_uri"   validate:"max=1,min=0"`           //启用strip_uri
 	NeedWebsocket          int    `json:"need_websocket"   validate:"max=1,min=0"`           //是否支持websocket
