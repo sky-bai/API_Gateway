@@ -1,12 +1,14 @@
 package serviceInfo
 
 import (
+	"API_Gateway/api/internal/middleware"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
 	"errors"
+	"gopkg.in/go-playground/validator.v9"
 	"strings"
 
 	"API_Gateway/api/internal/svc"
@@ -29,9 +31,18 @@ func NewServiceUpdateHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-// 更新http服务
+// ServiceUpdateHttp 更新http服务
 func (l *ServiceUpdateHttpLogic) ServiceUpdateHttp(req types.UpdateHTTPResquest) (*types.CommonReponse, error) {
+	errMessage := ErrorString{errMessage: ""}
 
+	err := middleware.Val.Struct(req)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, errValue := range errs.Translate(middleware.Trans) {
+			errMessage.errMessage += " " + errValue
+		}
+		return nil, &errMessage
+	}
 	// 需要根据id 判断是否有已存在的服务
 	serviceInfo, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOne(req.ID)
 	if err != nil {
