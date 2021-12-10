@@ -32,7 +32,7 @@ type AddHTTPResquest {
 type UpdateHTTPResquest {
     ID          int64  `json:"id"  validate:"required,min=1"`                                                                                      //服务ID
     ServiceName string `json:"service_name" validate:"required,valid_service_name"`                                                                //服务名
-    ServiceDesc string `json:"service_desc" form:"service_desc" comment:"服务描述" example:"test_http_service_indb" validate:"required,max=255,min=1"` //服务描述
+    ServiceDesc string `json:"service_desc" validate:"required,max=255,min=1"` //服务描述
 
     RuleType       int    `json:"rule_type"  validate:"max=1,min=0"`                 //接入类型
     Rule           string `json:"rule"  validate:"required,valid_rule"`              //域名或者前缀
