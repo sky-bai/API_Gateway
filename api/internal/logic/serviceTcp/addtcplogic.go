@@ -30,7 +30,7 @@ func NewAddTcpLogic(ctx context.Context, svcCtx *svc.ServiceContext) AddTcpLogic
 	}
 }
 
-// 增加tcp服务
+// AddTcp 增加tcp服务
 func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Reponse, error) {
 
 	// 1.检查该服务名是否被占用
