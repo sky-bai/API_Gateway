@@ -30,7 +30,7 @@ func NewUpdateGrpcLogic(ctx context.Context, svcCtx *svc.ServiceContext) UpdateG
 	}
 }
 
-// 更新grpc服务
+// UpdateGrpc 更新grpc服务
 func (l *UpdateGrpcLogic) UpdateGrpc(req types.UpdateGrpcRequest) (*types.Reponse, error) {
 
 	// 1.ip与权重数量一致
