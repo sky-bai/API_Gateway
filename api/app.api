@@ -1,0 +1,35 @@
+syntax = "v1"
+
+
+type AddAppRequest {
+    AppID string `json:"app_id"  validate:"required"`  // 租户id
+    Name string `json:"name"  validate:"required"`     // 租户名称
+    Secret string `json:"secret"  validate:""`         // 密钥
+    WhiteIPS string `json:"white_ips"`                 // ip白名单，支持前缀匹配
+    Qpd int64 `json:"qpd"   validate:""`               // 日请求量限制
+    Qps int64 `json:"qps"   validate:""`               // 每秒请求量限制
+}
+
+type UpdateAppRequest {
+    AppID string `json:"app_id"  validate:"required"`  // 租户id
+    Name string `json:"name"  validate:"required"`     // 租户名称
+    Secret string `json:"secret"  validate:""`         // 密钥
+    WhiteIPS string `json:"white_ips"`                 // ip白名单，支持前缀匹配
+    Qpd int64 `json:"qpd"   validate:""`               // 日请求量限制
+    Qps int64 `json:"qps"   validate:""`               // 每秒请求量限制
+}
+
+type AppResponse  {
+    Message string `json:"msg"`
+}
+
+@server(
+    group: app
+)
+service gateway-api {
+    @handler addApp
+    post /service/add_app (AddAppRequest) returns (AppResponse);
+
+    @handler deleteApp
+    post /service/appDelete (UpdateAppRequest) returns (AppResponse);
+}
