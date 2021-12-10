@@ -9,13 +9,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	ut "github.com/go-playground/universal-translator"
+	"gopkg.in/go-playground/validator.v9"
 	"strings"
 
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
 	"github.com/tal-tech/go-zero/core/logx"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 type AddHttpLogic struct {
@@ -32,8 +31,6 @@ func NewAddHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) AddHttpLog
 	}
 }
 
-var uni *ut.UniversalTranslator
-
 type ErrorString struct {
 	errMessage string
 }
@@ -44,12 +41,13 @@ func (e *ErrorString) Error() string {
 
 // AddHttp 添加http服务
 func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse, error) {
+
 	errMessage := ErrorString{errMessage: ""}
 
-	err := middleware.Val.Struct(req)
+	err := middleware.ValidatorHandler.Validate.Struct(&req)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, errValue := range errs.Translate(middleware.Trans) {
+		for _, errValue := range errs.Translate(middleware.ValidatorHandler.Translate) {
 			errMessage.errMessage += " " + errValue
 		}
 		return nil, &errMessage
