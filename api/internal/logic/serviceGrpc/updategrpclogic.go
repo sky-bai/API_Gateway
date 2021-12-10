@@ -73,5 +73,9 @@ func (l *UpdateGrpcLogic) UpdateGrpc(req types.UpdateGrpcRequest) (*types.Repons
 	loadBalance.IpList = req.IpList
 	loadBalance.WeightList = req.WeightList
 
-	return &types.Reponse{}, nil
+	err = l.svcCtx.GatewayServiceGrpcRuleModel.UpdateGrpc(service, grpcRule, accessControl, loadBalance)
+	if err != nil {
+		return nil, err
+	}
+	return &types.Reponse{Msg: "更新grpc服务"}, nil
 }

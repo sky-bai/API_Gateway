@@ -35,14 +35,14 @@ type (
 	}
 
 	GatewayServiceAccessControl struct {
-		Id                int64  `db:"id"`                  // 自增主键
-		ServiceId         int64  `db:"service_id"`          // 服务id
-		OpenAuth          int64  `db:"open_auth"`           // 是否开启权限 1=开启
-		BlackList         string `db:"black_list"`          // 黑名单ip
-		WhiteList         string `db:"white_list"`          // 白名单ip
-		WhiteHostName     string `db:"white_host_name"`     // 白名单主机
-		ClientipFlowLimit int64  `db:"clientip_flow_limit"` // 客户端ip限流
-		ServiceFlowLimit  int64  `db:"service_flow_limit"`  // 服务端限流
+		Id                int64  `db:"id" json:"id"`                                   // 自增主键
+		ServiceId         int64  `db:"service_id" json:"service_id"`                   // 服务id
+		OpenAuth          int64  `db:"open_auth" json:"open_auth"`                     // 是否开启权限 1=开启
+		BlackList         string `db:"black_list" json:"black_list"`                   // 黑名单ip
+		WhiteList         string `db:"white_list" json:"white_list"`                   // 白名单ip
+		WhiteHostName     string `db:"white_host_name" json:"white_host_name"`         // 白名单主机
+		ClientipFlowLimit int64  `db:"clientip_flow_limit" json:"clientip_flow_limit"` // 客户端ip限流
+		ServiceFlowLimit  int64  `db:"service_flow_limit" json:"service_flow_limit"`   // 服务端限流
 	}
 )
 
