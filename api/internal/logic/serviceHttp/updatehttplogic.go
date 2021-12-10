@@ -1,7 +1,9 @@
-package serviceInfo
+package serviceHttp
 
 import (
 	"API_Gateway/api/internal/middleware"
+	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/internal/types"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
@@ -11,40 +13,37 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
 
-	"API_Gateway/api/internal/svc"
-	"API_Gateway/api/internal/types"
-
 	"github.com/tal-tech/go-zero/core/logx"
 )
 
-type ServiceUpdateHttpLogic struct {
+type UpdateHttpLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewServiceUpdateHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) ServiceUpdateHttpLogic {
-	return ServiceUpdateHttpLogic{
+func NewUpdateHttpLogic(ctx context.Context, svcCtx *svc.ServiceContext) UpdateHttpLogic {
+	return UpdateHttpLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-// ServiceUpdateHttp 更新http服务
-func (l *ServiceUpdateHttpLogic) ServiceUpdateHttp(req types.UpdateHTTPResquest) (*types.CommonReponse, error) {
+// UpdateHttp 更新http服务
+func (l *UpdateHttpLogic) UpdateHttp(req types.UpdateHTTPResquest) (*types.Reponse, error) {
 	errMessage := ErrorString{errMessage: ""}
 
-	err := middleware.Val.Struct(req)
+	err := middleware.ValidatorHandler.Validate.Struct(&req)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, errValue := range errs.Translate(middleware.Trans) {
+		for _, errValue := range errs.Translate(middleware.ValidatorHandler.Translate) {
 			errMessage.errMessage += " " + errValue
 		}
 		return nil, &errMessage
 	}
 	// 需要根据id 判断是否有已存在的服务
-	serviceInfo, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOne(req.ID)
+	serviceInfo, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOneByServiceId(int(req.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -59,6 +58,7 @@ func (l *ServiceUpdateHttpLogic) ServiceUpdateHttp(req types.UpdateHTTPResquest)
 
 	// 数据库更新该服务
 	service := ga_service_info.GatewayServiceInfo{}
+	service.Id = req.ID
 	service.ServiceDesc = req.ServiceDesc
 	service.ServiceName = req.ServiceName
 
@@ -89,5 +89,5 @@ func (l *ServiceUpdateHttpLogic) ServiceUpdateHttp(req types.UpdateHTTPResquest)
 
 	err = l.svcCtx.GatewayServiceInfoModel.UpdateDate(service, httpRule, accessControl, loadBalance)
 
-	return &types.CommonReponse{Msg: "该http服务更新完成"}, nil
+	return &types.Reponse{Msg: "该http服务更新完成"}, nil
 }
