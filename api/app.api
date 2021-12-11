@@ -1,6 +1,5 @@
 syntax = "v1"
 
-
 type AddAppRequest {
     AppID string `json:"app_id"  validate:"required"`  // 租户id
     Name string `json:"name"  validate:"required"`     // 租户名称
@@ -11,15 +10,34 @@ type AddAppRequest {
 }
 
 type UpdateAppRequest {
-    AppID string `json:"app_id"  validate:"required"`  // 租户id
-    Name string `json:"name"  validate:"required"`     // 租户名称
-    Secret string `json:"secret"  validate:""`         // 密钥
-    WhiteIPS string `json:"white_ips"`                 // ip白名单，支持前缀匹配
-    Qpd int64 `json:"qpd"   validate:""`               // 日请求量限制
-    Qps int64 `json:"qps"   validate:""`               // 每秒请求量限制
+    ID int64 `json:"id"  validate:"required"`
+    AppID string `json:"app_id"  validate:""`         // 租户id
+    Name string `json:"name" validate:"required"`     // 租户名称
+    Secret string `json:"secret"  validate:"required"`// 密钥
+    WhiteIPS string `json:"white_ips"`                // ip白名单，支持前缀匹配
+    Qpd int64 `json:"qpd"`                            // 日请求量限制
+    Qps int64 `json:"qps"`                            // 每秒请求量限制
 }
 
-type AppResponse  {
+type DeleteAppRequest {
+    ID int64 `json:"id"  validate:"required"`
+}
+
+type AppDetailRequest {
+    ID int64 `json:"id"  validate:"required"`
+}
+
+type AppListRequest {
+    Info     string `json:"info" form:"info" comment:"查找信息" validate:""`
+    PageSize int    `json:"page_size" form:"page_size" comment:"页数" validate:"required,min=1,max=999"`
+    PageNo   int    `json:"page_no" form:"page_no" comment:"页码" validate:"required,min=1,max=999"`
+}
+
+type AppStatusRequest{
+    ID int64 `json:"id" validate:"required"`
+}
+
+type AppResponse {
     Message string `json:"msg"`
 }
 
@@ -30,6 +48,19 @@ service gateway-api {
     @handler addApp
     post /service/add_app (AddAppRequest) returns (AppResponse);
 
+    @handler updateApp
+    post /service/update_app (UpdateAppRequest) returns (AppResponse);
+
     @handler deleteApp
-    post /service/appDelete (UpdateAppRequest) returns (AppResponse);
+    post /service/appDelete (DeleteAppRequest) returns (AppResponse);
+
+    @handler appDetail
+    post /app/app_detail (AppDetailRequest) returns (AppResponse);
+
+    @handler appList
+    post /app/app_list (AppListRequest) returns (AppResponse);
+
+    @handler appStatus
+    post /app/app_status (AppStatusRequest) returns (AppResponse);
+
 }
