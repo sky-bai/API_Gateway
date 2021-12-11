@@ -1,6 +1,9 @@
 package serviceGrpc
 
 import (
+	"API_Gateway/api/internal/middleware"
+	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/internal/types"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_info"
@@ -8,10 +11,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gopkg.in/go-playground/validator.v9"
 	"strings"
-
-	"API_Gateway/api/internal/svc"
-	"API_Gateway/api/internal/types"
 
 	"github.com/tal-tech/go-zero/core/logx"
 )
@@ -30,8 +31,27 @@ func NewAddGrpcLogic(ctx context.Context, svcCtx *svc.ServiceContext) AddGrpcLog
 	}
 }
 
-// 增加grpc服务
+type ErrorString struct {
+	errMessage string
+}
+
+func (e *ErrorString) Error() string {
+	return e.errMessage
+}
+
+// AddGrpc 增加grpc服务
 func (l *AddGrpcLogic) AddGrpc(req types.AddGrpcRequest) (*types.Reponse, error) {
+
+	errMessage := ErrorString{errMessage: ""}
+
+	err := middleware.ValidatorHandler.Validate.Struct(&req)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, errValue := range errs.Translate(middleware.ValidatorHandler.Translate) {
+			errMessage.errMessage += " " + errValue
+		}
+		return nil, &errMessage
+	}
 
 	// 1.先判断是否已存在的服务名
 	serviceId, err := l.svcCtx.GatewayServiceInfoModel.FindOneByServiceName(req.ServiceName)
