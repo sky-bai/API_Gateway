@@ -33,6 +33,9 @@ type (
 
 		// GetServiceList 查询所有租户信息
 		GetServiceList(appId string, pageNo, pageSize int) (*util.PageList, error)
+
+		// GetAppCount 获取所有租户数量
+		GetAppCount() (int, error)
 	}
 
 	defaultGatewayAppModel struct {
@@ -145,5 +148,20 @@ func (m *defaultGatewayAppModel) GetServiceList(appId string, pageNum, pageSize 
 		return nil, ErrNotFound
 	default:
 		return nil, errors.New("查询租户列表信息查询失败")
+	}
+}
+
+// GetAppCount 获取所有租户数量
+func (m *defaultGatewayAppModel) GetAppCount() (int, error) {
+	query := fmt.Sprintf("select count(*) from %s where `is_delete` = 0", m.table)
+	var countNum int
+	err := m.conn.QueryRow(&countNum, query)
+	switch err {
+	case nil:
+		return countNum, nil
+	case sqlc.ErrNotFound:
+		return 0, ErrNotFound
+	default:
+		return 0, err
 	}
 }

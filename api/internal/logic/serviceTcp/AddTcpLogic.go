@@ -31,7 +31,7 @@ func NewAddTcpLogic(ctx context.Context, svcCtx *svc.ServiceContext) AddTcpLogic
 }
 
 // AddTcp 增加tcp服务
-func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Reponse, error) {
+func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Response, error) {
 
 	// 1.检查该服务名是否被占用
 	serviceId, err := l.svcCtx.GatewayServiceInfoModel.FindOneByServiceName(req.ServiceName)
@@ -91,5 +91,6 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Reponse, error) {
 		return nil, errors.New("添加tcp服务失败")
 	}
 
-	return &types.Reponse{Msg: "增加tcp服务成功"}, nil
+	return &types.Response{Msg: "增加tcp服务成功"}, nil
 }
+
