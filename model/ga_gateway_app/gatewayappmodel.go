@@ -1,6 +1,7 @@
 package ga_gateway_app
 
 import (
+	"API_Gateway/util"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -29,6 +30,9 @@ type (
 
 		// FindOneByAppId 根据appId查询租户信息
 		FindOneByAppId(appId string) (*GatewayApp, error)
+
+		// GetServiceList 查询所有租户信息
+		GetServiceList(appId string, pageNo, pageSize int) (*util.PageList, error)
 	}
 
 	defaultGatewayAppModel struct {
@@ -101,5 +105,45 @@ func (m *defaultGatewayAppModel) FindOneByAppId(appId string) (*GatewayApp, erro
 		return nil, ErrNotFound
 	default:
 		return nil, errors.New("根据appId查询租户信息查询失败")
+	}
+}
+
+// GetServiceList 查询所有租户信息
+func (m *defaultGatewayAppModel) GetServiceList(appId string, pageNum, pageSize int) (*util.PageList, error) {
+
+	countNum := 0
+	if appId == "" {
+		countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `is_delete` = 0", m.table)
+		err := m.conn.QueryRow(&countNum, countQuery)
+		startNum := (pageNum - 1) * pageSize
+
+		query := fmt.Sprintf("select %s from %s where  is_delete` = 0 limit 1 ORDER BY `id` DESC LIMIT ?,?", gatewayAppRows, m.table)
+		var resp []GatewayApp
+		err = m.conn.QueryRows(&resp, query, startNum, pageSize)
+		switch err {
+		case nil:
+			res := util.CutPage(countNum, pageNum, pageSize, resp)
+			return &res, nil
+		case sqlc.ErrNotFound:
+			return nil, ErrNotFound
+		default:
+			return nil, errors.New("查询租户列表信息查询失败")
+		}
+	}
+	countQuery := fmt.Sprintf("SELECT count(*) FROM %s WHERE `app_id` = ? and `is_delete` = 0", m.table)
+	err := m.conn.QueryRow(&countNum, countQuery, appId)
+	startNum := (pageNum - 1) * pageSize
+
+	query := fmt.Sprintf("select %s from %s where `app_id` = ? and is_delete` = 0 limit 1 ORDER BY `id` DESC LIMIT ?,?", gatewayAppRows, m.table)
+	var resp []GatewayApp
+	err = m.conn.QueryRows(&resp, query, "%"+appId+"%", startNum, pageSize)
+	switch err {
+	case nil:
+		res := util.CutPage(countNum, pageNum, pageSize, resp)
+		return &res, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, errors.New("查询租户列表信息查询失败")
 	}
 }
