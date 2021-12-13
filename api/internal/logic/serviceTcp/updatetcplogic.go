@@ -29,8 +29,8 @@ func NewUpdateTcpLogic(ctx context.Context, svcCtx *svc.ServiceContext) UpdateTc
 	}
 }
 
-// 更新Tcp服务
-func (l *UpdateTcpLogic) UpdateTcp(req types.UpdateTcpRequest) (*types.Reponse, error) {
+// UpdateTcp 更新Tcp服务
+func (l *UpdateTcpLogic) UpdateTcp(req types.UpdateTcpRequest) (*types.Response, error) {
 
 	// 1.如果ip列表与权重列表不一样 就返回
 	if len(strings.Split(req.IpList, "/n")) != len(strings.Split(req.WeightList, "/n")) {
@@ -69,5 +69,5 @@ func (l *UpdateTcpLogic) UpdateTcp(req types.UpdateTcpRequest) (*types.Reponse, 
 	loadBalance.IpList = req.IpList
 	loadBalance.WeightList = req.WeightList
 
-	return &types.Reponse{Msg: "更新tcp服务成功"}, nil
+	return &types.Response{Msg: "更新tcp服务成功"}, nil
 }
