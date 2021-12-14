@@ -10,7 +10,7 @@ type RandomBalance struct {
 	rss      []string
 
 	// 这里我需要维护下游服务器列表
-	conf LoadBalanceZkConfInterface
+	conf LoadBalanceConfInterface
 	// 这里定义了一个关于负载均衡配置的接口 它可以获得1.服务器配置 2.更新服务器配置 也就是说这里抽象出一组方法 不管具体实现 让其他负载均衡配置来实现这个接口
 	// 每个负载均衡配置方法内部都有一个负载均衡的配置
 	// 它可以获取服务器列表
@@ -43,7 +43,7 @@ func (r *RandomBalance) Next() string {
 	return r.rss[r.curIndex]
 }
 
-func (r *RandomBalance) SetConf(conf LoadBalanceZkConfInterface) {
+func (r *RandomBalance) SetConf(conf LoadBalanceConfInterface) {
 	r.conf = conf
 }
 
