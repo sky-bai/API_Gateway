@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// hash 将一组数据转换成一个唯一的数据
+// Hash  将一组数据转换成一个唯一的数据
 type Hash func(data []byte) uint32
 type UInt32Slice []uint32
 
@@ -28,7 +28,7 @@ type ConsistentHashBalance struct {
 	keySlice      UInt32Slice       // 以排序的节点hash 切片
 	serverHashMap map[uint32]string // key 为hash值，value为节点key
 
-	conf LoadBalanceZkConfInterface
+	conf LoadBalanceConfInterface
 }
 
 func (c *ConsistentHashBalance) Update() {
@@ -104,6 +104,6 @@ func (c *ConsistentHashBalance) Get(key string) (string, error) {
 
 }
 
-func (c *ConsistentHashBalance) SetConf(conf LoadBalanceZkConfInterface) {
+func (c *ConsistentHashBalance) SetConf(conf LoadBalanceConfInterface) {
 	c.conf = conf
 }
