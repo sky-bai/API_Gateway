@@ -1,49 +1,49 @@
 type AddTcpRequest {
-    ServiceName string `json:"service_name"  validate:"required,valid_service_name"`
-    ServiceDesc string `json:"service_desc"  validate:"required"`
-    Port int `json:"port"  validate:"required,min=8001,max=8999"`
-    HeaderTransfor string `json:"header_transfor"  validate:""`
-    OpenAuth int `json:"open_auth"  validate:""`
-    BlackList string `json:"black_list"  validate:"valid_iplist"`
-    WhiteList string `json:"white_list"  validate:"valid_iplist"`
-    WhiteHostName string `json:"white_host_name"  validate:"valid_iplist"`
-    ClientIPFlowLimit int `json:"clientip_flow_limit"  validate:""`
-    ServiceFlowLimit int `json:"service_flow_limit"  validate:""`
-    RoundType int `json:"round_type" validate:""`
-    IpList string `json:"ip_list"  validate:"required,valid_ipportlist"`
-    WeightList string `json:"weight_list"  validate:"required,valid_weightlist"`
-    ForbidList string `json:"forbid_list"  validate:"valid_iplist"`
+	ServiceName       string `json:"service_name"  validate:"required,valid_service_name"`
+	ServiceDesc       string `json:"service_desc"  validate:"required"`
+	Port              int    `json:"port"  validate:"required,min=8001,max=8999"`
+	HeaderTransfor    string `json:"header_transfor"  validate:""`
+	OpenAuth          int    `json:"open_auth"  validate:""`
+	BlackList         string `json:"black_list"  validate:"valid_iplist"`
+	WhiteList         string `json:"white_list"  validate:"valid_iplist"`
+	WhiteHostName     string `json:"white_host_name"  validate:"valid_iplist"`
+	ClientIPFlowLimit int    `json:"clientip_flow_limit"  validate:""`
+	ServiceFlowLimit  int    `json:"service_flow_limit"  validate:""`
+	RoundType         int    `json:"round_type" validate:""`
+	IpList            string `json:"ip_list"  validate:"required,valid_ipportlist"`
+	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`
+	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`
 }
 
 type Response {
-    Msg string `json:"msg"`
+	Msg string `json:"msg"`
 }
 
 type UpdateTcpRequest {
-    ID int64 `json:"id"  validate:"required"`                                         // 服务ID
-    ServiceName string `json:"service_name"  validate:"required,valid_service_name"`  // 服务名称
-    ServiceDesc string `json:"service_desc"  validate:"required"`                     // 服务描述
-    Port int `json:"port"  validate:"required,min=8001,max=8999"`                     // 端口，需要设置8001-8999范围内
-    OpenAuth int `json:"open_auth"  validate:""`                                      // 是否开启权限验证
-    BlackList string `json:"black_list" validate:"valid_iplist"`                      // 黑名单IP，以逗号间隔，白名单优先级高于黑名单
-    WhiteList string `json:"white_list"  validate:"valid_iplist"`                     // 白名单IP，以逗号间隔，白名单优先级高于黑名单
-    WhiteHostName string `json:"white_host_name"  validate:"valid_iplist"`            // 白名单主机，以逗号间隔
-    ClientIPFlowLimit int `json:"clientip_flow_limit"   validate:""`                  // 客户端IP限流
-    ServiceFlowLimit int `json:"service_flow_limit"  validate:""`                     // 服务端限流
-    RoundType int `json:"round_type"  validate:""`                                    // 轮询策略
-    IpList string `json:"ip_list"  validate:"required,valid_ipportlist"`              // IP列表
-    WeightList string `json:"weight_list"  validate:"required,valid_weightlist"`      // 权重列表
-    ForbidList string `json:"forbid_list"  validate:"valid_iplist"`                   // 禁用IP列表
+	ID                int64  `json:"id"  validate:"required"`                              // 服务ID
+	ServiceName       string `json:"service_name"  validate:"required,valid_service_name"` // 服务名称
+	ServiceDesc       string `json:"service_desc"  validate:"required"`                    // 服务描述
+	Port              int    `json:"port"  validate:"required,min=8001,max=8999"`          // 端口，需要设置8001-8999范围内
+	OpenAuth          int    `json:"open_auth"  validate:""`                               // 是否开启权限验证
+	BlackList         string `json:"black_list" validate:"valid_iplist"`                   // 黑名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteList         string `json:"white_list"  validate:"valid_iplist"`                  // 白名单IP，以逗号间隔，白名单优先级高于黑名单
+	WhiteHostName     string `json:"white_host_name"  validate:"valid_iplist"`             // 白名单主机，以逗号间隔
+	ClientIPFlowLimit int    `json:"clientip_flow_limit"   validate:""`                    // 客户端IP限流
+	ServiceFlowLimit  int    `json:"service_flow_limit"  validate:""`                      // 服务端限流
+	RoundType         int    `json:"round_type"  validate:""`                              // 轮询策略
+	IpList            string `json:"ip_list"  validate:"required,valid_ipportlist"`        // IP列表
+	WeightList        string `json:"weight_list"  validate:"required,valid_weightlist"`    // 权重列表
+	ForbidList        string `json:"forbid_list"  validate:"valid_iplist"`                 // 禁用IP列表
 }
 
 @server(
-    group: serviceTcp
+	group: serviceTcp
 )
 service gateway-api {
-
-    @handler addTcp
-    post /service/service_add_tcp (AddTcpRequest) returns (Response);
-
-    @handler updateTcp
-    post /service/service_update_tcp (UpdateTcpRequest) returns (Response);
+	
+	@handler addTcp
+	post /service/add_tcp (AddTcpRequest) returns (Response);
+	
+	@handler updateTcp
+	post /service/update_tcp (UpdateTcpRequest) returns (Response);
 }
