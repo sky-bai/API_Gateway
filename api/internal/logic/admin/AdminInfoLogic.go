@@ -23,8 +23,21 @@ func NewAdminInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) AdminInf
 	}
 }
 
+// AdminInfo 获取管理员信息
 func (l *AdminInfoLogic) AdminInfo() (*types.AdminInfoReponse, error) {
-	// todo: add your logic here and delete this line
+	userId := 1
+	adminInfo, err := l.svcCtx.GatewayAdminModel.FindOne(int64(userId))
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.AdminInfoReponse{}, nil
+	return &types.AdminInfoReponse{
+		ID:           int(adminInfo.Id),
+		Name:         adminInfo.UserName,
+		LoginTime:    int(adminInfo.CreateAt.Unix()),
+		Avatar:       "https://wpimg.wallstcn.com/f778738c-e4f8-4670-b634-56703b4acafe.gif",
+		Introduction: "I am a super administrator",
+		Roles:        []string{"admin"},
+	}, nil
+
 }
