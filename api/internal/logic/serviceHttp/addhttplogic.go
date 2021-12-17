@@ -7,13 +7,14 @@ import (
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
 
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
+
 	"github.com/tal-tech/go-zero/core/logx"
 )
 
