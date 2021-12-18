@@ -20,6 +20,6 @@ func ServiceDetailHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceDetailLogic(r.Context(), ctx)
 		resp, err := l.ServiceDetail(req)
-		reponse.Response(w, resp, err)
+		reponse.Response(w, resp, err) //②
 	}
 }
