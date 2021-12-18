@@ -2,16 +2,17 @@ package serviceHttp
 
 import (
 	"API_Gateway/api/internal/middleware"
-	"API_Gateway/api/internal/svc"
-	"API_Gateway/api/internal/types"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
+
+	"API_Gateway/api/internal/svc"
+	"API_Gateway/api/internal/types"
 
 	"github.com/tal-tech/go-zero/core/logx"
 )
@@ -59,7 +60,7 @@ func (l *UpdateHttpLogic) UpdateHttp(req types.UpdateHTTPResquest) (*types.Repon
 	// 数据库更新该服务
 	service := ga_service_info.GatewayServiceInfo{}
 	service.Id = req.ID
-	service.ServiceDesc = req.ServiceDesc
+	//service.ServiceDesc = req.ServiceDesc
 	service.ServiceName = req.ServiceName
 
 	httpRule := ga_service_http_rule.GatewayServiceHttpRule{}
