@@ -20,6 +20,6 @@ func ServiceListHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceListLogic(r.Context(), ctx)
 		resp, err := l.ServiceList(req)
-		reponse.Response(w, resp, err)
+		reponse.Response(w, resp, err) //②
 	}
 }
