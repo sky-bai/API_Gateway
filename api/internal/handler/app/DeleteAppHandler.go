@@ -1,6 +1,7 @@
 package app
 
 import (
+	"API_Gateway/util/reponse"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/app"
@@ -11,7 +12,7 @@ import (
 
 func DeleteAppHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.UpdateAppRequest
+		var req types.DeleteAppRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
