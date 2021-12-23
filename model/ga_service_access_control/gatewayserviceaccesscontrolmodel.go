@@ -25,7 +25,7 @@ type (
 		Update(data GatewayServiceAccessControl) error
 		Delete(id int64) error
 
-		// 根据服务ID去查
+		// FindOneByServiceId 根据服务ID去查
 		FindOneByServiceId(serviceId int64) (*GatewayServiceAccessControl, error)
 	}
 

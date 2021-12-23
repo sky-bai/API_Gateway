@@ -25,10 +25,10 @@ type (
 		Update(data GatewayServiceTcpRule) error
 		Delete(id int64) error
 
-		// 根据服务ID查出该服务的tcp信息
+		// FindOneByServiceId 根据服务ID查出该服务的tcp信息
 		FindOneByServiceId(serviceId int) (*GatewayServiceTcpRule, error)
 
-		// 根据端口号查询出该服务的tcp信息
+		// FindOneByPort 根据端口号查询出该服务的tcp信息
 		FindOneByPort(port int) (int, error)
 	}
 
@@ -38,9 +38,9 @@ type (
 	}
 
 	GatewayServiceTcpRule struct {
-		Id        int64 `db:"id"`         // 自增主键
-		ServiceId int64 `db:"service_id"` // 服务id
-		Port      int64 `db:"port"`       // 端口号
+		Id        int64 `db:"id" json:"id"`                 // 自增主键
+		ServiceId int64 `db:"service_id" json:"service_id"` // 服务id
+		Port      int64 `db:"port" json:"port"`             // 端口号
 	}
 )
 
@@ -88,9 +88,9 @@ func (m *defaultGatewayServiceTcpRuleModel) FindOneByPort(port int) (int, error)
 
 // 根据服务ID查出该服务的tcp信息
 func (m *defaultGatewayServiceTcpRuleModel) FindOneByServiceId(serviceId int) (*GatewayServiceTcpRule, error) {
-	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceTcpRuleRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? and `is_delete` = ? limit 1", gatewayServiceTcpRuleRows, m.table)
 	var resp GatewayServiceTcpRule
-	err := m.conn.QueryRow(&resp, query, serviceId)
+	err := m.conn.QueryRow(&resp, query, serviceId, 0)
 	switch err {
 	case nil:
 		return &resp, nil

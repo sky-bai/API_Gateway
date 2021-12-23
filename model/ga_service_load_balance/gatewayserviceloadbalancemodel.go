@@ -33,19 +33,19 @@ type (
 	}
 
 	GatewayServiceLoadBalance struct {
-		Id                     int64  `db:"id"`                       // 自增主键
-		ServiceId              int64  `db:"service_id"`               // 服务id
-		CheckMethod            int64  `db:"check_method"`             // 检查方法 0=tcpchk,检测端口是否握手成功
-		CheckTimeout           int64  `db:"check_timeout"`            // check超时时间,单位s
-		CheckInterval          int64  `db:"check_interval"`           // 检查间隔, 单位s
-		RoundType              int64  `db:"round_type"`               // 轮询方式 0=random 1=round-robin 2=weight_round-robin 3=ip_hash
-		IpList                 string `db:"ip_list"`                  // ip列表
-		WeightList             string `db:"weight_list"`              // 权重列表
-		ForbidList             string `db:"forbid_list"`              // 禁用ip列表
-		UpstreamConnectTimeout int64  `db:"upstream_connect_timeout"` // 建立连接超时, 单位s
-		UpstreamHeaderTimeout  int64  `db:"upstream_header_timeout"`  // 获取header超时, 单位s
-		UpstreamIdleTimeout    int64  `db:"upstream_idle_timeout"`    // 链接最大空闲时间, 单位s
-		UpstreamMaxIdle        int64  `db:"upstream_max_idle"`        // 最大空闲链接数
+		Id                     int64  `db:"id" json:"id"`                                             // 自增主键
+		ServiceId              int64  `db:"service_id" json:"service_id"`                             // 服务id
+		CheckMethod            int64  `db:"check_method" json:"check_method"`                         // 检查方法 0=tcpchk,检测端口是否握手成功
+		CheckTimeout           int64  `db:"check_timeout" json:"check_timeout"`                       // check超时时间,单位s
+		CheckInterval          int64  `db:"check_interval" json:"check_interval"`                     // 检查间隔, 单位s
+		RoundType              int64  `db:"round_type" json:"round_type"`                             // 轮询方式 0=random 1=round-robin 2=weight_round-robin 3=ip_hash
+		IpList                 string `db:"ip_list" json:"ip_list"`                                   // ip列表
+		WeightList             string `db:"weight_list" json:"weight_list"`                           // 权重列表
+		ForbidList             string `db:"forbid_list" json:"forbid_list"`                           // 禁用ip列表
+		UpstreamConnectTimeout int64  `db:"upstream_connect_timeout" json:"upstream_connect_timeout"` // 建立连接超时, 单位s
+		UpstreamHeaderTimeout  int64  `db:"upstream_header_timeout" json:"upstream_header_timeout"`   // 获取header超时, 单位s
+		UpstreamIdleTimeout    int64  `db:"upstream_idle_timeout" json:"upstream_idle_timeout"`       // 链接最大空闲时间, 单位s
+		UpstreamMaxIdle        int64  `db:"upstream_max_idle" json:"upstream_max_idle"`               // 最大空闲链接数
 	}
 )
 
