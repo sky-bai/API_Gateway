@@ -23,6 +23,7 @@ type WeightRoundRobinBalance struct {
 }
 
 func (w *WeightRoundRobinBalance) Get(s string) (string, error) {
+	fmt.Println("rss:", w.rss)
 	return w.Next(), nil
 }
 
@@ -32,10 +33,14 @@ func (w *WeightRoundRobinBalance) SetConf(conf LoadBalanceConfInterface) {
 
 func (w *WeightRoundRobinBalance) Update() {
 	if conf, ok := w.conf.(*LoadBalanceCheckConfig); ok {
-		fmt.Println("WeightRoundRobinBalance get check conf:", conf.GetConf())
+		//fmt.Println("WeightRoundRobinBalance get check conf:", conf.GetConf())
 		w.rss = nil
 		for _, ip := range conf.GetConf() {
-			w.Add(strings.Split(ip, ",")...)
+			fmt.Println("配置负载均衡器的服务器列表WeightRoundRobinBalance get ip:", ip)
+			err := w.Add(strings.Split(ip, ",")...)
+			if err != nil {
+				fmt.Println("WeightRoundRobinBalance get conf err:", err)
+			}
 		}
 	}
 }
@@ -44,9 +49,13 @@ func (w *WeightRoundRobinBalance) Update() {
 // 最初的时候 每个节点的effectiveWeight 和 currentWeight 分别是 weight
 
 func (w *WeightRoundRobinBalance) Add(params ...string) error {
+	fmt.Println("开始添加服务器")
 	if len(params) != 2 {
 		return errors.New("param len need 2 ")
 	}
+
+	fmt.Println("params:", params)
+	fmt.Println("params:", params[1])
 
 	parInt, err := strconv.ParseInt(params[1], 10, 64)
 	if err != nil {
@@ -61,6 +70,7 @@ func (w *WeightRoundRobinBalance) Add(params ...string) error {
 		effectiveWeight: int(parInt),
 	})
 
+	fmt.Println("已配置好的 WeightRoundRobinBalance get rss:", w.rss)
 	return nil
 }
 
@@ -71,6 +81,8 @@ func (w *WeightRoundRobinBalance) Next() string {
 
 	for i := 0; i < len(w.rss); i++ {
 		node := w.rss[i]
+		fmt.Println("node:", node)
+		fmt.Println("node:", node.addr)
 		// step1: 统计所有有效权重之和
 		totalWeight += node.Weight
 
@@ -89,6 +101,7 @@ func (w *WeightRoundRobinBalance) Next() string {
 	}
 
 	if best == nil {
+		fmt.Println("WeightRoundRobinBalance best is nil")
 		return ""
 	}
 	// step 5 变更best 临时权重临时权重
