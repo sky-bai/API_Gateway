@@ -14,11 +14,11 @@ type RoundRobinBalance struct {
 }
 
 func (r *RoundRobinBalance) Get(s string) (string, error) {
-	panic("implement me")
+	return r.Next(), nil
 }
 
 func (r *RoundRobinBalance) Update() {
-	panic("implement me")
+	//panic("implement me")
 }
 
 func (r *RoundRobinBalance) Add(params ...string) error {

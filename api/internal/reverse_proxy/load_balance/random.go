@@ -17,11 +17,11 @@ type RandomBalance struct {
 }
 
 func (r *RandomBalance) Get(s string) (string, error) {
-	panic("implement me")
+	return r.Next(), nil
 }
 
 func (r *RandomBalance) Update() {
-	panic("implement me")
+	//panic("implement me")
 }
 
 // Add 添加服务器列表
