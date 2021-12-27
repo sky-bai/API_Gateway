@@ -42,6 +42,7 @@ func (w *WeightRoundRobinBalance) Update() {
 				fmt.Println("WeightRoundRobinBalance get conf err:", err)
 			}
 		}
+		fmt.Println("该负载均衡器维护的下游服务器列表", w.rss)
 	}
 }
 
