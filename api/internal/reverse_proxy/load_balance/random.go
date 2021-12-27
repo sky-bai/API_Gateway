@@ -2,7 +2,9 @@ package load_balance
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
+	"strings"
 )
 
 type RandomBalance struct {
@@ -21,8 +23,21 @@ func (r *RandomBalance) Get(s string) (string, error) {
 }
 
 func (r *RandomBalance) Update() {
-	//panic("implement me")
+	if conf, ok := r.conf.(LoadBalanceConfInterface); ok {
+		fmt.Println("Update get check conf:", conf.GetConf())
+		r.rss = nil
+		for _, ip := range conf.GetConf() {
+			fmt.Println("添加进去的ip:", ip)
+			r.Add(strings.Split(ip, ",")[0])
+		}
+		fmt.Println("该负载均衡器维护的下游服务器列表", r.rss)
+	}
 }
+
+//func Obj2Json111(s interface{}) string {
+//	obj, _ := jsoniter.Marshal(s)
+//	return string(obj)
+//}
 
 // Add 添加服务器列表
 func (r *RandomBalance) Add(params ...string) error {
@@ -40,6 +55,7 @@ func (r *RandomBalance) Next() string {
 		return ""
 	}
 	r.curIndex = rand.Intn(len(r.rss)) //nolint:gosec
+	fmt.Println("随机获取的下游服务器IP:", r.rss[r.curIndex])
 	return r.rss[r.curIndex]
 }
 
