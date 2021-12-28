@@ -6,6 +6,7 @@ import (
 	"hash/crc32"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -32,7 +33,15 @@ type ConsistentHashBalance struct {
 }
 
 func (c *ConsistentHashBalance) Update() {
-	panic("implement me")
+	if conf, ok := c.conf.(LoadBalanceConfInterface); ok {
+		fmt.Println("Update get check conf:", conf.GetConf())
+		c.keySlice = nil
+		c.serverHashMap = map[uint32]string{}
+		fmt.Println("conf.GetConf()", conf.GetConf())
+		for _, ip := range conf.GetConf() {
+			c.Add(strings.Split(ip, ",")...)
+		}
+	}
 }
 
 func (c *ConsistentHashBalance) IsEmpty() bool {
