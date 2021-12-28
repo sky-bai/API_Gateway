@@ -12,7 +12,7 @@ import (
 
 func ServiceStatusHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ServiceDetailResquest
+		var req types.ServiceStatusResquest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
@@ -20,6 +20,6 @@ func ServiceStatusHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceInfo.NewServiceStatusLogic(r.Context(), ctx)
 		resp, err := l.ServiceStatus(req)
-		reponse.Response(w, resp, err)
+		reponse.Response(w, resp, err) //②
 	}
 }
