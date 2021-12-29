@@ -44,7 +44,7 @@ func (e *ErrorString) Error() string {
 func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse, error) {
 
 	errMessage := ErrorString{errMessage: ""}
-
+	// 1. 校验参数
 	err := middleware.ValidatorHandler.Validate.Struct(&req)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
@@ -54,7 +54,7 @@ func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse,
 		return nil, &errMessage
 	}
 
-	// 需要根据rule 和 ruleType 判断是否有已存在的服务
+	// 2.需要根据rule 和 ruleType 判断是否有已存在的服务
 	serviceID, err := l.svcCtx.GatewayServiceHttpRuleModel.FindOneByRule(req.RuleType, req.Rule)
 	if err != nil {
 		fmt.Println("err", err)
@@ -64,12 +64,12 @@ func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse,
 		return nil, errors.New("该http服务已存在")
 	}
 
-	// 如果ip列表与权重列表不一样 就返回
-	if len(strings.Split(req.IpList, "/n")) != len(strings.Split(req.WeightList, "/n")) {
+	// 3.如果ip列表与权重列表不一样 就返回
+	if len(strings.Split(req.IpList, "\n")) != len(strings.Split(req.WeightList, "\n")) {
 		return nil, errors.New("ip列表和权重列表数量不一致")
 	}
 
-	// 数据库添加该服务
+	// 4.数据库添加该服务
 	serviceInfo := ga_service_info.GatewayServiceInfo{}
 	serviceInfo.ServiceDesc = req.ServiceDesc
 	serviceInfo.ServiceName = req.ServiceName
@@ -99,11 +99,10 @@ func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse,
 	loadBalance.UpstreamIdleTimeout = int64(req.UpstreamIdleTimeout)
 	loadBalance.UpstreamMaxIdle = int64(req.UpstreamMaxIdle)
 
-	fmt.Println("---------")
 	err = l.svcCtx.GatewayServiceInfoModel.InsertData(serviceInfo, httpRule, accessControl, loadBalance)
-
 	if err != nil {
-		return nil, err
+		logx.Error("添加HTTP服务失败", err)
+		return nil, errors.New("添加HTTP服务失败")
 	}
 
 	return &types.CommonReponse{Msg: "添加http服务成功"}, nil
