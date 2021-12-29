@@ -1,6 +1,7 @@
 package serviceGrpc
 
 import (
+	"API_Gateway/util/reponse"
 	"net/http"
 
 	"API_Gateway/api/internal/logic/serviceGrpc"
@@ -19,10 +20,6 @@ func AddGrpcHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := serviceGrpc.NewAddGrpcLogic(r.Context(), ctx)
 		resp, err := l.AddGrpc(req)
-		if err != nil {
-			httpx.Error(w, err)
-		} else {
-			httpx.OkJson(w, resp)
-		}
+		reponse.Response(w, resp, err) //②
 	}
 }
