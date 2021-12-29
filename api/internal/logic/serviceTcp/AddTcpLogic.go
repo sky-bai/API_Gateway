@@ -44,12 +44,12 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Response, error) {
 	}
 
 	// 2.检查该服务的端口号是否被占用
-	id, err := l.svcCtx.GatewayServiceTcpRuleModel.FindOneByPort(req.Port)
+	isTcpUsed, err := l.svcCtx.GatewayServiceTcpRuleModel.FindOneByPort(req.Port)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("检查该服务端口是否被占用操作失败")
 	}
-	if id > 0 {
+	if isTcpUsed {
 		return nil, errors.New("该服务端口被占用，请重新输入")
 	}
 
@@ -93,4 +93,3 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Response, error) {
 
 	return &types.Response{Msg: "增加tcp服务成功"}, nil
 }
-
