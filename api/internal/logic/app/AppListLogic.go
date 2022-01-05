@@ -1,6 +1,7 @@
 package app
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/model/ga_gateway_app"
 	"context"
 	"fmt"
@@ -27,6 +28,12 @@ func NewAppListLogic(ctx context.Context, svcCtx *svc.ServiceContext) AppListLog
 	}
 }
 
+const (
+	FlowTotal         = "flow_total"
+	FlowServicePrefix = "flow_service_"
+	FlowAppPrefix     = "flow_app_"
+)
+
 func (l *AppListLogic) AppList(req types.AppListRequest) (*types.APPListResponse, error) {
 	appInfo, err := l.svcCtx.GatewayAppModel.GetServiceList(req.Info, req.PageNo, req.PageSize)
 	if err != nil && err != sqlc.ErrNotFound {
@@ -38,6 +45,10 @@ func (l *AppListLogic) AppList(req types.AppListRequest) (*types.APPListResponse
 
 	var list []types.APPListItemOutput
 	for _, app := range appList {
+		appCounter, err := global.FlowCounterHandler.GetCounter(FlowAppPrefix + app.AppId)
+		if err != nil {
+			return nil, errors.New("获取租户列表失败")
+		}
 		list = append(list, types.APPListItemOutput{
 			ID:       app.Id,
 			AppID:    app.AppId,
@@ -46,8 +57,8 @@ func (l *AppListLogic) AppList(req types.AppListRequest) (*types.APPListResponse
 			WhiteIPS: app.WhiteIps,
 			Qpd:      app.Qpd,
 			Qps:      app.Qps,
-			RealQpd:  0,
-			RealQps:  0,
+			RealQpd:  appCounter.TotalCount,
+			RealQps:  appCounter.QPS,
 		})
 	}
 
