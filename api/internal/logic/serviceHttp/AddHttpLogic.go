@@ -1,6 +1,7 @@
 package serviceHttp
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/api/internal/middleware"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
@@ -104,6 +105,16 @@ func (l *AddHttpLogic) AddHttp(req types.AddHTTPResquest) (*types.CommonReponse,
 		logx.Error("添加HTTP服务失败", err)
 		return nil, errors.New("添加HTTP服务失败")
 	}
+	s1 := global.ServiceDetail{
+		Info:     serviceInfo,
+		HTTPRule: httpRule,
+
+		LoadBalance:   loadBalance,
+		AccessControl: accessControl,
+	}
+	tem := *global.SerInfo
+	tem = append(tem, s1)
+	global.SerInfo = &tem
 
 	return &types.CommonReponse{Msg: "添加http服务成功"}, nil
 }
