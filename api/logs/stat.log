@@ -1,0 +1,224 @@
+{"@timestamp":"2022-01-06T01:04:18.106+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=60.1Mi, TotalAlloc=2832.1Mi, Sys=164.8Mi, NumGC=71"}
+{"@timestamp":"2022-01-06T01:04:18.138+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T01:04:22.053+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T01:04:35.803+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T02:27:21.309+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=86.7Mi, TotalAlloc=2858.6Mi, Sys=164.8Mi, NumGC=71"}
+{"@timestamp":"2022-01-06T02:27:21.342+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T02:27:25.256+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T02:27:39.006+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T03:15:05.760+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=60.9Mi, TotalAlloc=2884.8Mi, Sys=164.8Mi, NumGC=72"}
+{"@timestamp":"2022-01-06T03:15:05.792+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T03:15:09.709+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T04:45:57.236+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T04:46:39.520+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=87.5Mi, TotalAlloc=2911.3Mi, Sys=164.8Mi, NumGC=72"}
+{"@timestamp":"2022-01-06T04:46:39.553+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T04:46:43.469+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T06:15:48.420+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T06:16:30.722+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=62.0Mi, TotalAlloc=2937.5Mi, Sys=164.8Mi, NumGC=73"}
+{"@timestamp":"2022-01-06T06:16:30.754+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T07:44:32.373+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T07:44:46.123+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:45:48.824+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=88.2Mi, TotalAlloc=2963.6Mi, Sys=164.8Mi, NumGC=73"}
+{"@timestamp":"2022-01-06T08:45:48.857+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:45:52.773+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:46:06.522+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:46:48.827+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=63.6Mi, TotalAlloc=2990.2Mi, Sys=164.8Mi, NumGC=74"}
+{"@timestamp":"2022-01-06T08:46:48.859+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:46:52.773+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:47:06.523+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:47:48.828+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=90.1Mi, TotalAlloc=3016.8Mi, Sys=164.8Mi, NumGC=74"}
+{"@timestamp":"2022-01-06T08:47:48.864+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:47:52.775+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:48:06.525+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:48:48.830+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=65.1Mi, TotalAlloc=3043.4Mi, Sys=164.8Mi, NumGC=75"}
+{"@timestamp":"2022-01-06T08:48:48.861+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:48:52.777+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:49:06.527+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:49:48.832+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=89.3Mi, TotalAlloc=3067.5Mi, Sys=164.8Mi, NumGC=75"}
+{"@timestamp":"2022-01-06T08:49:48.864+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:49:52.780+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:50:06.529+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:50:48.834+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=65.1Mi, TotalAlloc=3094.1Mi, Sys=164.8Mi, NumGC=76"}
+{"@timestamp":"2022-01-06T08:50:48.864+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:50:52.782+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:51:06.531+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:51:48.836+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=91.7Mi, TotalAlloc=3120.7Mi, Sys=164.8Mi, NumGC=76"}
+{"@timestamp":"2022-01-06T08:51:48.867+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:51:52.783+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:52:06.533+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:52:48.837+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=67.1Mi, TotalAlloc=3147.3Mi, Sys=164.8Mi, NumGC=77"}
+{"@timestamp":"2022-01-06T08:52:48.870+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:52:52.786+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:53:06.534+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:53:48.839+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=93.7Mi, TotalAlloc=3173.8Mi, Sys=164.8Mi, NumGC=77"}
+{"@timestamp":"2022-01-06T08:53:48.871+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:53:52.787+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:54:06.536+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:54:48.839+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=68.0Mi, TotalAlloc=3199.7Mi, Sys=164.8Mi, NumGC=78"}
+{"@timestamp":"2022-01-06T08:54:48.873+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:54:52.788+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:55:06.538+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:55:48.843+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=94.5Mi, TotalAlloc=3226.3Mi, Sys=164.8Mi, NumGC=78"}
+{"@timestamp":"2022-01-06T08:55:48.873+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:55:52.791+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:56:06.540+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:56:48.804+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=69.6Mi, TotalAlloc=3252.8Mi, Sys=164.8Mi, NumGC=79"}
+{"@timestamp":"2022-01-06T08:56:48.836+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:56:52.750+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:57:06.494+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:57:48.793+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=96.2Mi, TotalAlloc=3279.4Mi, Sys=164.8Mi, NumGC=79"}
+{"@timestamp":"2022-01-06T08:57:48.825+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:57:52.741+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:58:06.490+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:58:48.793+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=71.5Mi, TotalAlloc=3306.0Mi, Sys=164.8Mi, NumGC=80"}
+{"@timestamp":"2022-01-06T08:58:48.825+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:58:52.741+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:59:06.490+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T08:59:48.793+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=98.1Mi, TotalAlloc=3332.6Mi, Sys=164.8Mi, NumGC=80"}
+{"@timestamp":"2022-01-06T08:59:48.825+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T08:59:52.742+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:00:06.491+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:00:48.793+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=73.2Mi, TotalAlloc=3359.1Mi, Sys=164.8Mi, NumGC=81"}
+{"@timestamp":"2022-01-06T09:00:48.825+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:00:52.742+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:01:06.491+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:01:48.793+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=99.8Mi, TotalAlloc=3385.7Mi, Sys=164.8Mi, NumGC=81"}
+{"@timestamp":"2022-01-06T09:01:48.825+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:01:52.742+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:02:06.491+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:02:48.794+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=74.3Mi, TotalAlloc=3412.3Mi, Sys=164.8Mi, NumGC=82"}
+{"@timestamp":"2022-01-06T09:02:48.826+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:02:52.742+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:03:06.492+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:03:48.795+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=100.9Mi, TotalAlloc=3438.8Mi, Sys=164.8Mi, NumGC=82"}
+{"@timestamp":"2022-01-06T09:03:48.827+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:03:52.743+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:04:06.492+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:04:48.794+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=75.2Mi, TotalAlloc=3465.4Mi, Sys=164.8Mi, NumGC=83"}
+{"@timestamp":"2022-01-06T09:04:48.827+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:04:52.744+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:05:06.492+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:05:48.795+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=101.7Mi, TotalAlloc=3492.0Mi, Sys=164.8Mi, NumGC=83"}
+{"@timestamp":"2022-01-06T09:05:48.828+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:05:52.743+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:06:06.493+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:06:48.796+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=76.0Mi, TotalAlloc=3518.5Mi, Sys=164.8Mi, NumGC=84"}
+{"@timestamp":"2022-01-06T09:06:48.828+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:06:52.744+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:07:06.493+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:07:48.795+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=102.5Mi, TotalAlloc=3545.1Mi, Sys=164.8Mi, NumGC=84"}
+{"@timestamp":"2022-01-06T09:07:48.828+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:07:52.744+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:08:06.493+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:08:48.796+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=76.9Mi, TotalAlloc=3571.7Mi, Sys=164.8Mi, NumGC=85"}
+{"@timestamp":"2022-01-06T09:08:48.828+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:08:52.744+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:09:06.494+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:09:48.798+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=103.5Mi, TotalAlloc=3598.2Mi, Sys=164.8Mi, NumGC=85"}
+{"@timestamp":"2022-01-06T09:09:48.828+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:09:52.745+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:10:06.494+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:10:48.798+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=77.8Mi, TotalAlloc=3624.8Mi, Sys=164.8Mi, NumGC=86"}
+{"@timestamp":"2022-01-06T09:10:48.829+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:10:52.745+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:11:06.494+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:11:48.797+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=104.4Mi, TotalAlloc=3651.4Mi, Sys=164.8Mi, NumGC=86"}
+{"@timestamp":"2022-01-06T09:11:48.831+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:11:52.746+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:12:06.496+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:12:48.801+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=78.7Mi, TotalAlloc=3678.0Mi, Sys=168.8Mi, NumGC=87"}
+{"@timestamp":"2022-01-06T09:12:48.831+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:12:52.747+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:13:06.497+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:13:48.800+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=105.3Mi, TotalAlloc=3704.5Mi, Sys=168.8Mi, NumGC=87"}
+{"@timestamp":"2022-01-06T09:13:48.833+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:13:52.748+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:14:06.499+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:16:03.978+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=79.6Mi, TotalAlloc=3730.7Mi, Sys=168.8Mi, NumGC=88"}
+{"@timestamp":"2022-01-06T09:16:04.010+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:16:07.927+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:16:21.676+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:17:03.979+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=106.1Mi, TotalAlloc=3757.3Mi, Sys=168.8Mi, NumGC=88"}
+{"@timestamp":"2022-01-06T09:17:04.012+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:17:07.928+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:17:21.677+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:18:03.979+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=80.4Mi, TotalAlloc=3783.8Mi, Sys=168.8Mi, NumGC=89"}
+{"@timestamp":"2022-01-06T09:18:04.012+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:18:07.928+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:18:21.677+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:19:03.980+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=55.0Mi, TotalAlloc=3810.4Mi, Sys=168.8Mi, NumGC=90"}
+{"@timestamp":"2022-01-06T09:19:04.013+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:19:07.929+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:19:21.678+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:20:03.980+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=81.5Mi, TotalAlloc=3837.0Mi, Sys=168.8Mi, NumGC=90"}
+{"@timestamp":"2022-01-06T09:20:04.013+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:20:07.929+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:20:21.678+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:21:03.983+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=56.5Mi, TotalAlloc=3863.5Mi, Sys=168.8Mi, NumGC=91"}
+{"@timestamp":"2022-01-06T09:21:04.015+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:21:07.931+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:21:21.680+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:22:03.982+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=83.1Mi, TotalAlloc=3890.1Mi, Sys=168.8Mi, NumGC=91"}
+{"@timestamp":"2022-01-06T09:22:04.015+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:22:07.932+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:22:21.680+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:23:03.982+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=57.7Mi, TotalAlloc=3916.7Mi, Sys=168.8Mi, NumGC=92"}
+{"@timestamp":"2022-01-06T09:23:04.014+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:23:07.931+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:23:21.680+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:24:03.984+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=84.2Mi, TotalAlloc=3943.2Mi, Sys=168.8Mi, NumGC=92"}
+{"@timestamp":"2022-01-06T09:24:04.017+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:24:07.931+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:24:21.681+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:25:03.985+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=59.4Mi, TotalAlloc=3969.8Mi, Sys=168.8Mi, NumGC=93"}
+{"@timestamp":"2022-01-06T09:25:04.017+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:25:07.934+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:25:21.681+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:26:03.973+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=85.9Mi, TotalAlloc=3996.4Mi, Sys=168.8Mi, NumGC=93"}
+{"@timestamp":"2022-01-06T09:26:04.006+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:26:07.922+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:26:21.670+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:27:03.972+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=61.2Mi, TotalAlloc=4022.9Mi, Sys=168.8Mi, NumGC=94"}
+{"@timestamp":"2022-01-06T09:27:04.005+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:27:07.921+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:27:21.670+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:28:03.973+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=87.8Mi, TotalAlloc=4049.5Mi, Sys=168.8Mi, NumGC=94"}
+{"@timestamp":"2022-01-06T09:28:04.005+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:28:07.921+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:28:21.670+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:29:03.973+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=63.1Mi, TotalAlloc=4076.1Mi, Sys=168.8Mi, NumGC=95"}
+{"@timestamp":"2022-01-06T09:29:04.006+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:29:07.922+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:29:21.670+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:30:03.973+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=89.7Mi, TotalAlloc=4102.6Mi, Sys=168.8Mi, NumGC=95"}
+{"@timestamp":"2022-01-06T09:30:04.006+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:30:07.922+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:30:21.671+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:31:03.973+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=64.1Mi, TotalAlloc=4129.2Mi, Sys=168.8Mi, NumGC=96"}
+{"@timestamp":"2022-01-06T09:31:04.006+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:31:07.923+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:31:21.671+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:32:03.974+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=90.7Mi, TotalAlloc=4155.8Mi, Sys=168.8Mi, NumGC=96"}
+{"@timestamp":"2022-01-06T09:32:04.007+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:32:07.923+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:32:21.672+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:33:03.975+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=64.9Mi, TotalAlloc=4182.4Mi, Sys=168.8Mi, NumGC=97"}
+{"@timestamp":"2022-01-06T09:33:04.007+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:33:07.923+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:33:21.672+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:34:03.974+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=91.5Mi, TotalAlloc=4208.9Mi, Sys=168.8Mi, NumGC=97"}
+{"@timestamp":"2022-01-06T09:34:04.007+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:34:07.923+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:34:21.672+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:35:03.975+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=65.9Mi, TotalAlloc=4235.5Mi, Sys=168.8Mi, NumGC=98"}
+{"@timestamp":"2022-01-06T09:35:04.008+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:35:07.923+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:35:21.673+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:36:03.975+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=92.5Mi, TotalAlloc=4262.1Mi, Sys=168.8Mi, NumGC=98"}
+{"@timestamp":"2022-01-06T09:36:04.008+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:36:07.924+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:36:21.673+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:37:03.976+08","level":"stat","content":"CPU: 0m, MEMORY: Alloc=66.7Mi, TotalAlloc=4288.6Mi, Sys=168.8Mi, NumGC=99"}
+{"@timestamp":"2022-01-06T09:37:04.008+08","level":"stat","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0"}
+{"@timestamp":"2022-01-06T09:37:07.924+08","level":"stat","content":"(gateway-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}
+{"@timestamp":"2022-01-06T09:37:21.673+08","level":"stat","content":"(http_proxy) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms"}

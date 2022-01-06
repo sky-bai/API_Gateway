@@ -32,15 +32,16 @@ func (m *HTTPBlackListMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc
 		}
 		fmt.Println("黑名单", blackIpList)
 		fmt.Println("real-ip", r.Header.Get("X-Real-IP"))
+		// 当权限校验开启的时候 并且 白名单是空的 才验证黑名单
 		if serviceInfo.AccessControl.OpenAuth == 1 && len(whileIpList) == 0 && len(blackIpList) > 0 {
 			if InStringSlice(blackIpList, r.Header.Get("X-Real-IP")) {
-				next(w, r)
-			} else {
-				_, err := w.Write([]byte("Access Denied"))
+				_, err := w.Write([]byte("当前IP在黑名单中，拒绝访问"))
 				if err != nil {
 					fmt.Println("write error", err)
 					return
 				}
+			} else {
+				next(w, r)
 			}
 		}
 	}

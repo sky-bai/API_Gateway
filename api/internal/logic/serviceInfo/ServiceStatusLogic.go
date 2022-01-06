@@ -3,7 +3,6 @@ package serviceInfo
 import (
 	"API_Gateway/api/internal/global"
 	"context"
-	"fmt"
 	"time"
 
 	"API_Gateway/api/internal/svc"
@@ -38,14 +37,14 @@ func (l *ServiceStatusLogic) ServiceStatus(req types.ServiceStatusResquest) (*ty
 
 	counter, err := global.FlowCounterHandler.GetCounter(global.FlowServicePrefix + serviceInfo.ServiceName)
 	if err != nil {
-		fmt.Println(err)
+		l.Error(err)
 		return nil, err
 	}
 	var todayList []int
 	currentTime := time.Now()
 	for i := 0; i < currentTime.Hour(); i++ {
 		newTime := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), i, 0, 0, 0, time.Local)
-		fmt.Println("!!!!!!", newTime)
+		//fmt.Println("!!!!!!", newTime)
 		data, _ := counter.GetHourData(newTime)
 
 		todayList = append(todayList, int(data))
@@ -55,7 +54,7 @@ func (l *ServiceStatusLogic) ServiceStatus(req types.ServiceStatusResquest) (*ty
 	yesterTime := currentTime.Add(-24 * time.Hour)
 	for i := 0; i < 24; i++ {
 		newTime := time.Date(yesterTime.Year(), yesterTime.Month(), yesterTime.Day(), i, 0, 0, 0, time.Local)
-		fmt.Println("!!!!!!+++++++", newTime)
+		//fmt.Println("!!!!!!+++++++", newTime)
 		data, _ := counter.GetHourData(newTime)
 
 		yesterdayList = append(yesterdayList, int(data))
