@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	//default check setting
+	// DefaultCheckMethod default check setting
 	DefaultCheckMethod    = 0
 	DefaultCheckTimeout   = 2
 	DefaultCheckMaxErrNum = 2
@@ -26,6 +26,9 @@ type LoadBalanceCheckConfig struct {
 	format string
 }
 
+// 1.添加观察者
+// 2.通知已绑定的负载均衡观察者更新
+
 // Attach 添加观察者
 func (s *LoadBalanceCheckConfig) Attach(o Observer) {
 	s.observers = append(s.observers, o)
@@ -40,7 +43,16 @@ func (s *LoadBalanceCheckConfig) NotifyAllObservers() {
 
 // GetConf 获取服务器IP和权重
 func (s *LoadBalanceCheckConfig) GetConf() []string {
-	return s.activeList
+	var confList []string
+	for _, ip := range s.activeList {
+		weight, ok := s.confIPWeight[ip]
+		if !ok {
+			weight = "50" //默认weight
+		}
+		//fmt.Println("format",s.format)
+		confList = append(confList, fmt.Sprintf(s.format, ip)+","+weight)
+	}
+	return confList
 }
 
 func NewLoadBalanceCheckConf(format string, conf map[string]string) (*LoadBalanceCheckConfig, error) {
@@ -53,11 +65,12 @@ func NewLoadBalanceCheckConf(format string, conf map[string]string) (*LoadBalanc
 		confIPWeight: conf,
 		format:       format,
 	}
+	//fmt.Println("下游服务器列表", aList)
 	mConf.WatchConf()
 	return mConf, nil
 }
 func (s *LoadBalanceCheckConfig) UpdateConf(conf []string) {
-	fmt.Println("UpdateConf", conf)
+	//fmt.Println("UpdateConf", conf)
 	s.activeList = conf
 	for _, obs := range s.observers {
 		obs.Update()
@@ -66,24 +79,25 @@ func (s *LoadBalanceCheckConfig) UpdateConf(conf []string) {
 
 // WatchConf 配置发生变动时,通知监听者也更新
 func (s *LoadBalanceCheckConfig) WatchConf() {
-	fmt.Println("开始心跳检测")
+	//fmt.Println("开始心跳检测")
 	go func() {
 		confIPErrNum := map[string]int{}
 		for {
-			changedList := []string{}
+			var changedList []string
 			for ip, _ := range s.confIPWeight {
 				// 每一次我们去向每一台服务器发送tcp的三次握手
-				conn, err := net.DialTimeout("tcp", ip, 1) // 如果是http rpc 就设置对应的方法
+				//fmt.Println("开始检测", ip)
+				conn, err := net.DialTimeout("tcp", ip, time.Duration(DefaultCheckTimeout)*time.Second) // 如果是http rpc 就设置对应的方法
 				// 如果成功就设置服务器故障次数为0
 				if err == nil {
 					conn.Close()
 					if _, ok := confIPErrNum[ip]; ok {
 						confIPErrNum[ip] = 0
 					}
-
 				}
 				// 如果失败就设置服务器故障次数+1
 				if err != nil {
+					fmt.Println("检测失败", ip, err)
 					if _, ok := confIPErrNum[ip]; ok {
 						confIPErrNum[ip]++
 					} else {
@@ -98,6 +112,7 @@ func (s *LoadBalanceCheckConfig) WatchConf() {
 			sort.Strings(s.activeList)
 			if !reflect.DeepEqual(changedList, s.activeList) {
 				s.UpdateConf(changedList)
+				fmt.Println("检测到服务器发生变化", changedList)
 			}
 			time.Sleep(time.Duration(DefaultCheckInterval) * time.Second)
 		}
