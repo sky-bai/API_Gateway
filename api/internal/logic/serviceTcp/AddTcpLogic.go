@@ -1,6 +1,7 @@
 package serviceTcp
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
@@ -90,6 +91,16 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Response, error) {
 		fmt.Println(err)
 		return nil, errors.New("添加tcp服务失败")
 	}
+	s1 := global.ServiceDetail{
+		Info:    serviceInfo,
+		TCPRule: tcpRule,
+
+		LoadBalance:   loadBalance,
+		AccessControl: accessControl,
+	}
+	tem := *global.SerInfo
+	tem = append(tem, s1)
+	global.SerInfo = &tem
 
 	return &types.Response{Msg: "增加tcp服务成功"}, nil
 }
