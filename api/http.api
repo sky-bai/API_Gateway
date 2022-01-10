@@ -102,6 +102,4 @@ service gateway-api {
     @handler UpdateHttp
     post /service/update_http (UpdateHTTPResquest) returns (HttpReponse);
 
-    @handler HttpDetail
-    post /service/http_detail (HttpeDetailResquest) returns (HttpDetailResponse);
 }

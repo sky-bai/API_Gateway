@@ -44,8 +44,8 @@ type Reponse {
 )
 service gateway-api {
     @handler addGrpc
-    post /service/service_add_grpc (AddGrpcRequest) returns (Reponse);
+    post /service/add_grpc (AddGrpcRequest) returns (Reponse);
 
     @handler updateGrpc
-    post /service/service_update_grpc (UpdateGrpcRequest) returns (Reponse);
+    post /service/update_grpc (UpdateGrpcRequest) returns (Reponse);
 }

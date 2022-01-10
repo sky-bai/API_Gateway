@@ -8,9 +8,73 @@ type PingReponse {
 
 @server(
     group: httpProxy
-    middleware: HTTPAccessMode,HTTPReverseProxy
+    middleware: HTTPAccessMode,HTTPFlowCount,HTTPFlowLimit,HTTPJwtToken,HTTPJwtFlowCount,HTTP_Jwt_Flow_Limit,HTTPWhiteList,HTTPBlackList,HeaderTransfer,StripUrl,UrlRewrite,HTTPReverseProxy
 )
 service gateway-api {
     @handler httpProxyPing
     get /http_proxy/ping returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyTimeout
+    get /http_proxy/timeout returns (PingReponse)
+}
+
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,HeaderTransfer,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyHeaderTransfer
+    get /http_proxy/header_transfer returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,StripUrl,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyHeaderStripUri
+    get /http_proxy/strip_uri/abc returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,UrlRewrite,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyUrlRewrite
+    get /http_proxy/url_rewrite returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,HTTPWhiteList,HTTPBlackList,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyWhiteList
+    get /http_proxy/white_list returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,HTTPFlowCount,HTTPFlowLimit,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyFlowCount
+    get /http_proxy/flow_count returns (PingReponse)
+}
+
+@server(
+    group: httpProxy
+    middleware: HTTPAccessMode,HTTPJwtToken,HTTPJwtFlowCount,HTTP_Jwt_Flow_Limit,HTTPReverseProxy
+)
+service gateway-api {
+    @handler httpProxyJwtToken
+    get /http_proxy/jwt_token returns (PingReponse)
 }
