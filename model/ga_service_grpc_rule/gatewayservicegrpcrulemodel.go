@@ -36,7 +36,7 @@ type (
 		FindIdByServiceId(serviceId int) (id int, err error)
 
 		// FindIdByPort 根据端口号查询是否存在该服务
-		FindIdByPort(port int) (int, error)
+		FindIdByPort(port int) (bool, error)
 
 		// InsertGrpcData 添加grpc服务
 		InsertGrpcData(req ga_service_info.GatewayServiceInfo, data GatewayServiceGrpcRule, ac ga_service_access_control.GatewayServiceAccessControl, lb ga_service_load_balance.GatewayServiceLoadBalance) error
@@ -87,7 +87,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) FindOne(id int64) (*GatewayServiceG
 
 // FindIdByServiceId 根据服务ID查找是否有服务ID
 func (m *defaultGatewayServiceGrpcRuleModel) FindIdByServiceId(serviceId int) (id int, err error) {
-	query := fmt.Sprintf("select id from %s where `service_id` = ? limit 1", m.table)
+	query := fmt.Sprintf("select id from %s where `service_id` = ? and `is_delete` = 0 limit 1", m.table)
 	var resp int
 	err = m.conn.QueryRow(&resp, query, serviceId)
 	switch err {
@@ -101,17 +101,17 @@ func (m *defaultGatewayServiceGrpcRuleModel) FindIdByServiceId(serviceId int) (i
 }
 
 // FindIdByPort 根据端口号查询是否存在该服务
-func (m *defaultGatewayServiceGrpcRuleModel) FindIdByPort(port int) (int, error) {
-	query := fmt.Sprintf("select id from %s where `port` = ? limit 1", m.table)
+func (m *defaultGatewayServiceGrpcRuleModel) FindIdByPort(port int) (bool, error) {
+	query := fmt.Sprintf("select id from %s where `port` = ? and `is_delete` = 0 limit 1", m.table)
 	var resp int
 	err := m.conn.QueryRow(&resp, query, port)
 	switch err {
 	case nil:
-		return resp, nil
+		return true, nil
 	case sqlc.ErrNotFound:
-		return 0, ErrNotFound
+		return false, nil
 	default:
-		return 0, err
+		return false, err
 	}
 }
 
@@ -165,12 +165,12 @@ func (m *defaultGatewayServiceGrpcRuleModel) InsertGrpcData(req ga_service_info.
 
 		// 2.拿到刚刚插入服务表的那条记录ID 写入grpc规则表
 		InsertId, _ := sqlResult.LastInsertId()
-		insertRuleSql := fmt.Sprintf("insert into gateway_service_grpc_rule (service_id,port,header_transfor) values (?,?,?++)")
+		insertRuleSql := fmt.Sprintf("insert into gateway_service_grpc_rule (service_id,port,header_transfor) values (?,?,?)")
 		fmt.Println("insertRuleSql :", insertRuleSql)
 
 		stmt1, err := session.Prepare(insertRuleSql)
 		if err != nil {
-			fmt.Println("InsertFrozendSql err:", err)
+			fmt.Println("insertRuleSql err:", err)
 			return err
 		}
 		defer stmt1.Close()
@@ -180,7 +180,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) InsertGrpcData(req ga_service_info.
 		}
 
 		// 3.写入权限控制表
-		insertAccessControlSql := fmt.Sprintf("insert into gateway_service_access_control (service_id,service_flow_limit,clientip_flow_limit,open_auth,black_list,white_list) values (?,?,?,?,?)")
+		insertAccessControlSql := fmt.Sprintf("insert into gateway_service_access_control (service_id,service_flow_limit,clientip_flow_limit,open_auth,black_list,white_list) values (?,?,?,?,?,?)")
 		fmt.Println("insertAccessControlSql :", insertAccessControlSql)
 
 		stmt2, err := session.Prepare(insertAccessControlSql)
@@ -195,7 +195,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) InsertGrpcData(req ga_service_info.
 		}
 
 		// 4.写入负载均衡控制表
-		insertLoadBalanceSql := fmt.Sprintf("insert into gateway_service_load_balance (service_id,round_type,ip_list,weight_list,upstream_connect_timeout,upstream_header_timeout,upstream_idle_timeout,upstream_max_idle) values (?,?,?,?,?)")
+		insertLoadBalanceSql := fmt.Sprintf("insert into gateway_service_load_balance (service_id,round_type,ip_list,weight_list) values (?,?,?,?)")
 		fmt.Println("insertLoadBalanceSql :", insertLoadBalanceSql)
 
 		stmt3, err := session.Prepare(insertLoadBalanceSql)
@@ -204,7 +204,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) InsertGrpcData(req ga_service_info.
 			return err
 		}
 		defer stmt3.Close()
-		if _, err := stmt3.Exec(InsertId, lb.RoundType, lb.IpList, lb.WeightList, lb.UpstreamConnectTimeout, lb.UpstreamHeaderTimeout, lb.UpstreamIdleTimeout, lb.UpstreamMaxIdle); err != nil {
+		if _, err := stmt3.Exec(InsertId, lb.RoundType, lb.IpList, lb.WeightList); err != nil {
 			fmt.Println("insertLoadBalanceSql err:", err)
 			return err
 		}
@@ -218,10 +218,26 @@ func (m *defaultGatewayServiceGrpcRuleModel) InsertGrpcData(req ga_service_info.
 // UpdateGrpc 更新grpc服务
 func (m *defaultGatewayServiceGrpcRuleModel) UpdateGrpc(req ga_service_info.GatewayServiceInfo, data GatewayServiceGrpcRule, ac ga_service_access_control.GatewayServiceAccessControl, lb ga_service_load_balance.GatewayServiceLoadBalance) error {
 
+	UpdateServiceSql := fmt.Sprintf("update gateway_service_info set service_desc = ? where `id` = ?")
+	fmt.Println("UpdateServiceSql", UpdateServiceSql)
+
 	err := m.conn.Transact(func(session sqlx.Session) error {
 
+		// 1.更新serviceInfo表数据
+		stmt, err := session.Prepare(UpdateServiceSql)
+		if err != nil {
+			fmt.Println("updateServiceInfo:err", err)
+			return errors.New("更新grpc info服务失败")
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(req.ServiceDesc, req.Id)
+		if err != nil {
+			fmt.Println("UpdateServiceSql exec", err)
+			return errors.New("更新tcp info服务失败")
+		}
+
 		// 2.更新grpc规则表
-		updateRuleSql := fmt.Sprintf("update gateway_service_grpc_rule set service_id = ?,port = ?,header_transfor = ?")
+		updateRuleSql := fmt.Sprintf("update gateway_service_grpc_rule set port = ?,header_transfor = ? where service_id = ?")
 		fmt.Println("updateRuleSql :", updateRuleSql)
 
 		stmt1, err := session.Prepare(updateRuleSql)
@@ -229,7 +245,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) UpdateGrpc(req ga_service_info.Gate
 			return errors.New("更新grpc服务失败")
 		}
 		defer stmt1.Close()
-		if _, err := stmt1.Exec(req.Id, data.Port, data.HeaderTransfor); err != nil {
+		if _, err := stmt1.Exec(data.Port, data.HeaderTransfor, req.Id); err != nil {
 			fmt.Println("insertRuleSql err:", err)
 			return errors.New("更新grpc服务失败")
 		}
@@ -248,7 +264,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) UpdateGrpc(req ga_service_info.Gate
 		}
 
 		// 4.写入负载均衡控制表
-		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set round_type = ?,ip_list = ?,weight_list = ?,upstream_connect_timeout = ?,upstream_header_timeout = ?,upstream_idle_timeout = ?,upstream_max_idle = ? where service_id = ?")
+		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set round_type = ?,ip_list = ?,weight_list = ? where service_id = ?")
 		fmt.Println("updateLoadBalanceSql :", updateLoadBalanceSql)
 
 		stmt3, err := session.Prepare(updateLoadBalanceSql)
@@ -257,7 +273,7 @@ func (m *defaultGatewayServiceGrpcRuleModel) UpdateGrpc(req ga_service_info.Gate
 			return errors.New("更新grpc服务失败")
 		}
 		defer stmt3.Close()
-		if _, err := stmt3.Exec(lb.RoundType, lb.IpList, lb.WeightList, lb.UpstreamConnectTimeout, lb.UpstreamHeaderTimeout, lb.UpstreamIdleTimeout, lb.UpstreamMaxIdle, req.Id); err != nil {
+		if _, err := stmt3.Exec(lb.RoundType, lb.IpList, lb.WeightList, req.Id); err != nil {
 			return errors.New("更新grpc服务失败")
 		}
 
