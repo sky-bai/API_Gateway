@@ -31,11 +31,14 @@ type (
 		// FindOneByAppId 根据appId查询租户信息
 		FindOneByAppId(appId string) (*GatewayApp, error)
 
-		// GetServiceList 查询所有租户信息
+		// GetServiceList 查询所有租户信息 分页
 		GetServiceList(appId string, pageNo, pageSize int) (*util.PageList, error)
 
 		// GetAppCount 获取所有租户数量
 		GetAppCount() (int, error)
+
+		// GetAllServiceList 查询所有租户信息 不分页
+		GetAllServiceList() ([]GatewayApp, error)
 	}
 
 	defaultGatewayAppModel struct {
@@ -120,7 +123,7 @@ func (m *defaultGatewayAppModel) GetServiceList(appId string, pageNum, pageSize 
 		err := m.conn.QueryRow(&countNum, countQuery)
 		startNum := (pageNum - 1) * pageSize
 
-		query := fmt.Sprintf("select %s from %s where  is_delete` = 0 limit 1 ORDER BY `id` DESC LIMIT ?,?", gatewayAppRows, m.table)
+		query := fmt.Sprintf("select %s from %s where  is_delete = 0  ORDER BY `id` DESC LIMIT ?,?", gatewayAppRows, m.table)
 		var resp []GatewayApp
 		err = m.conn.QueryRows(&resp, query, startNum, pageSize)
 		switch err {
@@ -137,7 +140,7 @@ func (m *defaultGatewayAppModel) GetServiceList(appId string, pageNum, pageSize 
 	err := m.conn.QueryRow(&countNum, countQuery, appId)
 	startNum := (pageNum - 1) * pageSize
 
-	query := fmt.Sprintf("select %s from %s where `app_id` = ? and is_delete` = 0 limit 1 ORDER BY `id` DESC LIMIT ?,?", gatewayAppRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `app_id` like ? and is_delete = 0  order by `id` desc limit ?,?", gatewayAppRows, m.table)
 	var resp []GatewayApp
 	err = m.conn.QueryRows(&resp, query, "%"+appId+"%", startNum, pageSize)
 	switch err {
@@ -163,5 +166,20 @@ func (m *defaultGatewayAppModel) GetAppCount() (int, error) {
 		return 0, ErrNotFound
 	default:
 		return 0, err
+	}
+}
+
+// GetAllServiceList 查询所有租户信息 不分页
+func (m *defaultGatewayAppModel) GetAllServiceList() ([]GatewayApp, error) {
+	query := fmt.Sprintf("select %s from %s where  is_delete = 0 ", gatewayAppRows, m.table)
+	var resp []GatewayApp
+	err := m.conn.QueryRows(&resp, query)
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, errors.New("查询租户列表信息查询失败")
 	}
 }
