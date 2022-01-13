@@ -1,25 +1,25 @@
-package serviceHttp
+package app
 
 import (
 	"API_Gateway/util/reponse"
 	"net/http"
 
-	"API_Gateway/api/internal/logic/serviceHttp"
+	"API_Gateway/api/internal/logic/app"
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
 	"github.com/tal-tech/go-zero/rest/httpx"
 )
 
-func HttpDetailHandler(ctx *svc.ServiceContext) http.HandlerFunc {
+func GetTokenHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.HttpeDetailResquest
+		var req types.GetTokenRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := serviceHttp.NewHttpDetailLogic(r.Context(), ctx)
-		resp, err := l.HttpDetail(req)
+		l := app.NewGetTokenLogic(r.Context(), ctx)
+		resp, err := l.GetToken(req)
 		reponse.Response(w, resp, err) //②
 	}
 }
