@@ -1,13 +1,14 @@
 package serviceGrpc
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 
 	"API_Gateway/api/internal/svc"
@@ -51,6 +52,7 @@ func (l *UpdateGrpcLogic) UpdateGrpc(req types.UpdateGrpcRequest) (*types.Repons
 
 	// 3.数据库更新该服务
 	service := ga_service_info.GatewayServiceInfo{}
+	service.Id = req.ID
 	service.ServiceDesc = req.ServiceDesc
 	service.ServiceName = req.ServiceName
 
@@ -75,7 +77,28 @@ func (l *UpdateGrpcLogic) UpdateGrpc(req types.UpdateGrpcRequest) (*types.Repons
 
 	err = l.svcCtx.GatewayServiceGrpcRuleModel.UpdateGrpc(service, grpcRule, accessControl, loadBalance)
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
+		return nil, errors.New("更新失败")
 	}
+
+	s1 := global.ServiceDetail{
+		Info:          service,
+		GRPCRule:      grpcRule,
+		LoadBalance:   loadBalance,
+		AccessControl: accessControl,
+	}
+	tem := *global.SerInfo
+	//tem = append(tem, s1)
+
+	var nilService []global.ServiceDetail
+
+	for _, value := range tem {
+		if value.GRPCRule.Port == int64(req.Port) {
+			nilService = append(nilService, s1)
+		} else {
+			nilService = append(nilService, value)
+		}
+	}
+	global.SerInfo = &nilService
 	return &types.Reponse{Msg: "更新grpc服务"}, nil
 }
