@@ -80,7 +80,7 @@ func (m *defaultGatewayServiceHttpRuleModel) FindOne(id int64) (*GatewayServiceH
 
 // FindOneByRule 根据ruleType(匹配类型) 和 rule规则查找数据
 func (m *defaultGatewayServiceHttpRuleModel) FindOneByRule(ruleType int, rule string) (int64, error) {
-	query := fmt.Sprintf("select service_id from %s where `rule_type` = ? and `rule` = ? limit 1", m.table)
+	query := fmt.Sprintf("select service_id from %s where `rule_type` = ? and `rule` = ? and `is_delete` = 0 limit 1", m.table)
 	var resp int64
 	err := m.conn.QueryRow(&resp, query, ruleType, rule)
 	switch err {
@@ -95,7 +95,7 @@ func (m *defaultGatewayServiceHttpRuleModel) FindOneByRule(ruleType int, rule st
 
 // FindOneByServiceId 根据服务ID去查出一条http数据
 func (m *defaultGatewayServiceHttpRuleModel) FindOneByServiceId(serviceId int) (*GatewayServiceHttpRule, error) {
-	query := fmt.Sprintf("select %s from %s where `service_id` = ? limit 1", gatewayServiceHttpRuleRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `service_id` = ? and `is_delete` = 0 limit 1", gatewayServiceHttpRuleRows, m.table)
 	var resp GatewayServiceHttpRule
 	err := m.conn.QueryRow(&resp, query, serviceId)
 	switch err {
