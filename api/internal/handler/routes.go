@@ -5,9 +5,11 @@ import (
 	"net/http"
 
 	admin "API_Gateway/api/internal/handler/admin"
+	app "API_Gateway/api/internal/handler/app"
 	httpProxy "API_Gateway/api/internal/handler/httpProxy"
 	httpsProxy "API_Gateway/api/internal/handler/httpsProxy"
 	serviceGrpc "API_Gateway/api/internal/handler/serviceGrpc"
+	serviceHttp "API_Gateway/api/internal/handler/serviceHttp"
 	serviceInfo "API_Gateway/api/internal/handler/serviceInfo"
 	serviceTcp "API_Gateway/api/internal/handler/serviceTcp"
 	"API_Gateway/api/internal/svc"
@@ -15,8 +17,8 @@ import (
 	"github.com/tal-tech/go-zero/rest"
 )
 
-func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
-	engine.AddRoutes(
+func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
@@ -28,6 +30,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/admin/login",
 				Handler: admin.AdminLoginHandler(serverCtx),
 			},
+		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
 			{
 				Method:  http.MethodPost,
 				Path:    "/admin/change_pwd",
@@ -44,9 +51,10 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: admin.AdminInfoHandler(serverCtx),
 			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
-	engine.AddRoutes(
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
@@ -60,60 +68,83 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/service/service_add_http",
-				Handler: serviceInfo.ServiceAddHttpHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/service/service_Update_http",
-				Handler: serviceInfo.ServiceUpdateHttpHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/service/service_detail/:id",
+				Path:    "/service/service_detail",
 				Handler: serviceInfo.ServiceDetailHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/service/service_status/:id",
+				Method:  http.MethodPost,
+				Path:    "/service/service_status",
 				Handler: serviceInfo.ServiceStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/service/panel_data",
+				Handler: serviceInfo.PanelDataHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/service/service_flow",
+				Handler: serviceInfo.ServiceFlowHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/service/panel_service_status",
+				Handler: serviceInfo.PanelServiceStatusHandler(serverCtx),
 			},
 		},
 	)
 
-	engine.AddRoutes(
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/service/service_add_tcp",
+				Path:    "/service/add_tcp",
 				Handler: serviceTcp.AddTcpHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/service/service_update_tcp",
+				Path:    "/service/update_tcp",
 				Handler: serviceTcp.UpdateTcpHandler(serverCtx),
 			},
 		},
 	)
 
-	engine.AddRoutes(
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.ParamCheck},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/service/add_http",
+					Handler: serviceHttp.AddHttpHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/service/update_http",
+					Handler: serviceHttp.UpdateHttpHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/service/service_add_grpc",
+				Path:    "/service/add_grpc",
 				Handler: serviceGrpc.AddGrpcHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/service/service_update_grpc",
+				Path:    "/service/update_grpc",
 				Handler: serviceGrpc.UpdateGrpcHandler(serverCtx),
 			},
 		},
 	)
 
-	engine.AddRoutes(
+	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPReverseProxy},
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPFlowCount, serverCtx.HTTPFlowLimit, serverCtx.HTTPJwtToken, serverCtx.HTTPJwtFlowCount, serverCtx.HTTP_Jwt_Flow_Limit, serverCtx.HTTPWhiteList, serverCtx.HTTPBlackList, serverCtx.HeaderTransfer, serverCtx.StripUrl, serverCtx.UrlRewrite, serverCtx.HTTPReverseProxy},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
@@ -124,7 +155,98 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 	)
 
-	engine.AddRoutes(
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/timeout",
+					Handler: httpProxy.HttpProxyTimeoutHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HeaderTransfer, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/header_transfer",
+					Handler: httpProxy.HttpProxyHeaderTransferHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.StripUrl, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/strip_uri/abc",
+					Handler: httpProxy.HttpProxyHeaderStripUriHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.UrlRewrite, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/url_rewrite",
+					Handler: httpProxy.HttpProxyUrlRewriteHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPWhiteList, serverCtx.HTTPBlackList, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/white_list",
+					Handler: httpProxy.HttpProxyWhiteListHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPFlowCount, serverCtx.HTTPFlowLimit, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/flow_count",
+					Handler: httpProxy.HttpProxyFlowCountHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.HTTPAccessMode, serverCtx.HTTPJwtToken, serverCtx.HTTPJwtFlowCount, serverCtx.HTTP_Jwt_Flow_Limit, serverCtx.HTTPReverseProxy},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/http_proxy/jwt_token",
+					Handler: httpProxy.HttpProxyJwtTokenHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
@@ -132,5 +254,53 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: httpsProxy.HttpsProxyPingHandler(serverCtx),
 			},
 		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/add_app",
+				Handler: app.AddAppHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/update_app",
+				Handler: app.UpdateAppHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/app_delete",
+				Handler: app.DeleteAppHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/app_detail",
+				Handler: app.AppDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/app_list",
+				Handler: app.AppListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/app/app_status",
+				Handler: app.AppStatusHandler(serverCtx),
+			},
+		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AppToken},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/app/get_token",
+					Handler: app.GetTokenHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 }
