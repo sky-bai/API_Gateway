@@ -2,6 +2,7 @@ package load_balance
 
 import (
 	"errors"
+	"strings"
 )
 
 // RoundRobinBalance 轮询负载均衡
@@ -18,7 +19,15 @@ func (r *RoundRobinBalance) Get(s string) (string, error) {
 }
 
 func (r *RoundRobinBalance) Update() {
-	//panic("implement me")
+	if conf, ok := r.conf.(LoadBalanceConfInterface); ok {
+		//fmt.Println("Update get check conf:", conf.GetConf())
+		r.rss = nil
+		//fmt.Println("准备更新的下游服务器列表",conf.GetConf())
+		for _, ip := range conf.GetConf() {
+			//fmt.Println("准备更新的单个下游服务器",strings.Split(ip, ",")[0])
+			r.Add(strings.Split(ip, ",")[0])
+		}
+	}
 }
 
 func (r *RoundRobinBalance) Add(params ...string) error {
