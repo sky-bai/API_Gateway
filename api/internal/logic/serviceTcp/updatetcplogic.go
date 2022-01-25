@@ -1,12 +1,14 @@
 package serviceTcp
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"API_Gateway/model/ga_service_tcp_rule"
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"API_Gateway/api/internal/svc"
@@ -48,6 +50,7 @@ func (l *UpdateTcpLogic) UpdateTcp(req types.UpdateTcpRequest) (*types.Response,
 
 	// 3.数据库更新该服务
 	service := ga_service_info.GatewayServiceInfo{}
+	service.Id = req.ID
 	service.ServiceDesc = req.ServiceDesc
 	service.ServiceName = req.ServiceName
 
@@ -69,5 +72,30 @@ func (l *UpdateTcpLogic) UpdateTcp(req types.UpdateTcpRequest) (*types.Response,
 	loadBalance.IpList = req.IpList
 	loadBalance.WeightList = req.WeightList
 
+	err = l.svcCtx.GatewayServiceInfoModel.UpdateTcpService(service, tcpRule, accessControl, loadBalance)
+	if err != nil {
+		return nil, errors.New("更新tcp服务失败")
+	}
+	s1 := global.ServiceDetail{
+		Info: service,
+
+		LoadBalance:   loadBalance,
+		AccessControl: accessControl,
+	}
+	tem := *global.SerInfo
+	//tem = append(tem, s1)
+
+	var nilService []global.ServiceDetail
+
+	for _, value := range tem {
+		if value.TCPRule.Port == int64(req.Port) {
+			nilService = append(nilService, s1)
+		} else {
+			nilService = append(nilService, value)
+		}
+	}
+	global.SerInfo = &nilService
+
+	fmt.Println(global.SerInfo)
 	return &types.Response{Msg: "更新tcp服务成功"}, nil
 }

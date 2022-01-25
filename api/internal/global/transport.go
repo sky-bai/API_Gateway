@@ -32,24 +32,34 @@ func NewTransport() *Transport {
 	}
 }
 
+// 负载均衡里面有连接池超时的设置
+
+// GetTrans 为这次请求配置对应的连接池
 func (t *Transport) GetTrans(service *ServiceDetail) (*http.Transport, error) {
-	for _, transportItem := range t.TransportSlice {
-		if transportItem.ServiceName == service.Info.ServiceName {
-			return transportItem.Transport, nil
-		}
-	}
+
+	// 1.判断这次请求的服务是否已经有连接池
+	//for _, transportItem := range t.TransportSlice {
+	//	if transportItem.ServiceName == service.Info.ServiceName {
+	//		return transportItem.Transport, nil
+	//	}
+	//}
+	//fmt.Println("service.LoadBalance.UpstreamHeaderTimeout",service.LoadBalance.UpstreamHeaderTimeout)
+	// 2.如果没有则创建一个连接池
 	trans := &http.Transport{
 		DialContext: (&net.Dialer{
-			Timeout: time.Duration(service.LoadBalance.UpstreamConnectTimeout) * time.Second,
+			Timeout: time.Duration(service.LoadBalance.UpstreamConnectTimeout) * time.Second, // 连接超时
 		}).DialContext,
-		MaxIdleConns:          int(service.LoadBalance.UpstreamMaxIdle),
-		IdleConnTimeout:       time.Duration(service.LoadBalance.UpstreamIdleTimeout) * time.Second,
-		ResponseHeaderTimeout: time.Duration(service.LoadBalance.UpstreamHeaderTimeout) * time.Second}
+		MaxIdleConns:          int(service.LoadBalance.UpstreamMaxIdle),                               // 最大空闲连接数  0 表示没有限制 保持 keep-alive 的数量
+		IdleConnTimeout:       time.Duration(service.LoadBalance.UpstreamIdleTimeout) * time.Second,   // 空闲连接超时  这个连接在关闭之前保持空闲的最长时间
+		ResponseHeaderTimeout: time.Duration(service.LoadBalance.UpstreamHeaderTimeout) * time.Second} // 读取返回头的超时
 
+	// 3.将已有服务和对应的配置放入map
 	TranItem := &TransportItem{
 		Transport:   trans,
 		ServiceName: service.Info.ServiceName}
 	t.TransportSlice = append(t.TransportSlice, TranItem)
+
+	//fmt.Println("设置的获取header头超时时间",trans.ResponseHeaderTimeout)
 
 	t.Locker.Lock()
 	defer t.Locker.Unlock()

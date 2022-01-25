@@ -2,7 +2,6 @@ package load_balance
 
 import (
 	"errors"
-	"fmt"
 	"hash/crc32"
 	"sort"
 	"strconv"
@@ -34,10 +33,10 @@ type ConsistentHashBalance struct {
 
 func (c *ConsistentHashBalance) Update() {
 	if conf, ok := c.conf.(LoadBalanceConfInterface); ok {
-		fmt.Println("Update get check conf:", conf.GetConf())
+		//fmt.Println("Update get check conf:", conf.GetConf())
 		c.keySlice = nil
 		c.serverHashMap = map[uint32]string{}
-		fmt.Println("conf.GetConf()", conf.GetConf())
+		//fmt.Println("conf.GetConf()", conf.GetConf())
 		for _, ip := range conf.GetConf() {
 			c.Add(strings.Split(ip, ",")...)
 		}
@@ -71,7 +70,7 @@ func (c *ConsistentHashBalance) Add(params ...string) error {
 	}
 	addr := params[0]
 
-	fmt.Println("添加进去的 addr ", addr)
+	//fmt.Println("添加进去的 addr ", addr)
 
 	c.mux.Lock()
 	defer c.mux.Unlock() // 每次使用一个map结构的时候 都要加锁
@@ -84,7 +83,7 @@ func (c *ConsistentHashBalance) Add(params ...string) error {
 		c.serverHashMap[hash] = addr          // 并把这个值和地址做一个映射
 	}
 
-	fmt.Println("服务器切片的 hash 值", c.keySlice)
+	//fmt.Println("服务器切片的 hash 值", c.keySlice)
 	// 对所有虚拟节点的哈希值进行排序，方便之后进行二分查找
 	sort.Sort(c.keySlice) // 这里使用的排序是什么
 	return nil

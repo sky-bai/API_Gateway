@@ -1,12 +1,14 @@
 package serviceHttp
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/api/internal/middleware"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
 	"API_Gateway/model/ga_service_load_balance"
 	"context"
+	"fmt"
 	"github.com/pkg/errors"
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
@@ -62,6 +64,7 @@ func (l *UpdateHttpLogic) UpdateHttp(req types.UpdateHTTPResquest) (*types.Repon
 	service.Id = req.ID
 	//service.ServiceDesc = req.ServiceDesc
 	service.ServiceName = req.ServiceName
+	service.ServiceDesc = req.ServiceDesc
 
 	httpRule := ga_service_http_rule.GatewayServiceHttpRule{}
 	httpRule.RuleType = int64(req.RuleType)
@@ -89,6 +92,32 @@ func (l *UpdateHttpLogic) UpdateHttp(req types.UpdateHTTPResquest) (*types.Repon
 	loadBalance.UpstreamMaxIdle = int64(req.UpstreamMaxIdle)
 
 	err = l.svcCtx.GatewayServiceInfoModel.UpdateDate(service, httpRule, accessControl, loadBalance)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("该http服务更新失败")
+	}
+
+	s1 := global.ServiceDetail{
+		Info:          service,
+		HTTPRule:      httpRule,
+		LoadBalance:   loadBalance,
+		AccessControl: accessControl,
+	}
+	tem := *global.SerInfo
+	//tem = append(tem, s1)
+
+	var nilService []global.ServiceDetail
+
+	for _, value := range tem {
+		if value.HTTPRule.Rule == req.Rule {
+			nilService = append(nilService, s1)
+		} else {
+			nilService = append(nilService, value)
+		}
+	}
+	global.SerInfo = &nilService
+
+	fmt.Println(global.SerInfo)
 
 	return &types.Reponse{Msg: "该http服务更新完成"}, nil
 }

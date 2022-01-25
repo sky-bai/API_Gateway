@@ -1,6 +1,7 @@
 package global
 
 import (
+	"API_Gateway/model/ga_gateway_app"
 	"API_Gateway/model/ga_service_access_control"
 	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_http_rule"
@@ -9,7 +10,7 @@ import (
 	"API_Gateway/model/ga_service_tcp_rule"
 )
 
-var SerInfo []ServiceDetail
+var SerInfo *[]ServiceDetail
 
 type ServiceDetail struct {
 	Info          ga_service_info.GatewayServiceInfo                    `json:"info" description:"基本信息"`
@@ -18,6 +19,35 @@ type ServiceDetail struct {
 	GRPCRule      ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
 	LoadBalance   ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
 	AccessControl ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
+}
+
+var AppInfo AppManager
+
+type AppManager struct {
+	AppMap   map[string]*ga_gateway_app.GatewayApp
+	AppSlice []*ga_gateway_app.GatewayApp
+}
+
+func init() {
+	AppInfo = AppManager{
+		AppMap:   make(map[string]*ga_gateway_app.GatewayApp),
+		AppSlice: make([]*ga_gateway_app.GatewayApp, 0),
+	}
+}
+
+const (
+	LoadTypeHTTP = 0
+	LoadTypeTcp  = 1
+	LoadTypeGrpc = 2
+
+	JwtSignKey = "my_sign_key"
+	JwtExpires = 60 * 60
+)
+
+var LoadTypeMap = map[int]string{
+	LoadTypeHTTP: "HTTP",
+	LoadTypeTcp:  "TCP",
+	LoadTypeGrpc: "GRPC",
 }
 
 //

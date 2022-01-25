@@ -1,12 +1,14 @@
 package serviceInfo
 
 import (
+	"API_Gateway/api/internal/global"
 	"API_Gateway/api/internal/middleware"
 	"API_Gateway/api/internal/svc"
 	"API_Gateway/api/internal/types"
 	"API_Gateway/model/ga_service_grpc_rule"
 	"API_Gateway/model/ga_service_http_rule"
 	"API_Gateway/model/ga_service_info"
+	"API_Gateway/model/ga_service_load_balance"
 	"API_Gateway/model/ga_service_tcp_rule"
 	"API_Gateway/pkg/errcode"
 	"API_Gateway/util"
@@ -15,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tal-tech/go-zero/core/stores/sqlc"
+	"github.com/tal-tech/go-zero/core/stores/sqlx"
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
 )
@@ -54,7 +57,7 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (*types.Da
 		}
 		return nil, &errMessage
 	}
-	// 通过服务名称和服务描述模糊查询 获取到 服务ID
+	// 1.通过服务名称和服务描述模糊查询 获取到 服务ID
 	dataLike, err := l.svcCtx.GatewayServiceInfoModel.FindDataLike(req.Info, req.PageSize, req.PageNo) // 其实查询出来的就是serviceInfo 但是我在上层进行了断言
 	if err != nil {
 		return nil, errors.New("获取服务信息失败")
@@ -73,9 +76,9 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (*types.Da
 	grpcRule := &ga_service_grpc_rule.GatewayServiceGrpcRule{}
 
 	var data []types.ServiceListItemReponse //nolint:prealloc
-	// 拿到每个服务ID
+	// 3.获取每一个服务的具体信息
 	for _, serviceInfo := range ServiceInfo {
-		// 负载类型 0=http 1=tcp 2=grpc
+		// 负载类型 0=http 1=tcp 2=grpc 4.先确定该服务是什么类型
 		switch serviceInfo.LoadType {
 		case errcode.LoadTypeHTTP:
 			httpRule, err = l.svcCtx.GatewayServiceHttpRuleModel.FindOneByServiceId(int(serviceInfo.Id))
@@ -97,42 +100,59 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (*types.Da
 		}
 
 		// 1、http后缀接入 clusterIP+clusterPort+path
-		//2、http域名接入 domain
-		//3、tcp、grpc接入 clusterIP+servicePort
+		// 2、http域名接入 domain
+		// 3、tcp、grpc接入 clusterIP+servicePort
 		serviceAddr := "unknown"
 		clusterIP := l.svcCtx.Config.Cluster.ClusterIP
 		clusterPort := l.svcCtx.Config.Cluster.ClusterPort
 		clusterSSLPort := l.svcCtx.Config.Cluster.ClusterSslPort
 
+		// 5.如果是https服务并且是前缀接入
 		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
 			httpRule.RuleType == errcode.HTTPRuleTypePrefixURL &&
 			httpRule.NeedHttps == 1 {
-			serviceAddr = fmt.Sprintf("%s:%s/%s", clusterIP, clusterSSLPort, httpRule.Rule)
+			serviceAddr = fmt.Sprintf("%s:%s%s", clusterIP, clusterSSLPort, httpRule.Rule)
 		}
-
+		// 6.如果是http服务并且是前缀接入
 		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
 			httpRule.RuleType == errcode.HTTPRuleTypePrefixURL &&
 			httpRule.NeedHttps == 0 {
-			serviceAddr = fmt.Sprintf("%s:%s/%s", clusterIP, clusterPort, httpRule.Rule)
+			serviceAddr = fmt.Sprintf("%s:%s%s", clusterIP, clusterPort, httpRule.Rule)
 		}
-
+		// 7.如果是http服务并且是域名接入
 		if serviceInfo.LoadType == errcode.LoadTypeHTTP &&
 			httpRule.RuleType == errcode.HTTPRuleTypeDomain {
 			serviceAddr = httpRule.Rule
 		}
+		// 8.如果是tcp服务
 		if serviceInfo.LoadType == errcode.LoadTypeTCP {
 			serviceAddr = fmt.Sprintf("%s:%d", clusterIP, tcpRule.Port)
 		}
+		// 9.如果是grpc服务
 		if serviceInfo.LoadType == errcode.LoadTypeGRPC {
 			serviceAddr = fmt.Sprintf("%s:%d", clusterIP, grpcRule.Port)
 		}
+		// 10.获取该服务发负载配置
 		loadBalance, err := l.svcCtx.GatewayServiceLoadBalanceModel.FindOneByServiceId(int(serviceInfo.Id))
+		if err == sqlx.ErrNotFound {
+			fmt.Println("!!!!!!!", err)
+			err = nil
+			loadBalance = &ga_service_load_balance.GatewayServiceLoadBalance{}
+		}
 		if err != nil {
 			return nil, errors.New("获取loadBalance服务信息失败")
 		}
+
 		ipList := strings.Split(loadBalance.IpList, ",")
 		if err != nil {
-			return nil, errors.New("修改ipList失败")
+			logx.Error("获取服务列表的时候，修改ipList失败")
+			return nil, errors.New("获取该服务信息失败")
+		}
+
+		// 11.获取该服务的qps
+		serviceCounter, err := global.FlowCounterHandler.GetCounter(global.FlowServicePrefix + serviceInfo.ServiceName)
+		if err != nil {
+			return nil, errors.New("获取该服务的qps失败")
 		}
 
 		ResponseData := &types.ServiceListItemReponse{
@@ -141,9 +161,9 @@ func (l *ServiceListLogic) ServiceList(req types.ServiceListResquest) (*types.Da
 			ServiceName: serviceInfo.ServiceName,
 			ServiceDesc: serviceInfo.ServiceDesc,
 			ServiceAddr: serviceAddr, // 从每个规则表中去判断服务的地址
-			//Qps:         serviceInfo.QPS,
-			//Qpd:         serviceInfo.TotalCount,
-			TotalNode: len(ipList),
+			Qps:         serviceCounter.QPS,
+			Qpd:         serviceCounter.TotalCount,
+			TotalNode:   len(ipList),
 		}
 		data = append(data, *ResponseData)
 	}

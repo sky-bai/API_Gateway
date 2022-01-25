@@ -25,7 +25,7 @@ func NewServiceFlowLogic(ctx context.Context, svcCtx *svc.ServiceContext) Servic
 	}
 }
 
-// ServiceFlow 大盘流量统计
+// ServiceFlow 大盘流量统计 对应首页今日流量统计
 func (l *ServiceFlowLogic) ServiceFlow() (*types.ServiceFlowResponse, error) {
 	counter, err := global.FlowCounterHandler.GetCounter(global.FlowTotal)
 	if err != nil {
@@ -36,7 +36,7 @@ func (l *ServiceFlowLogic) ServiceFlow() (*types.ServiceFlowResponse, error) {
 	currentTime := time.Now()
 	for i := 0; i <= currentTime.Hour(); i++ {
 		dateTime := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), i, 0, 0, 0, time.Local)
-		hourData, _ := counter.GetHourData(dateTime)
+		hourData, _ := counter.GetHourData(dateTime) // 不处理这里的错误 因为没有值就是0 但是可能就是redis报错
 		todayList = append(todayList, int(hourData))
 	}
 

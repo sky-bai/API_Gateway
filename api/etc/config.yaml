@@ -1,0 +1,9 @@
+LogConf:
+  ServiceName: "logs"
+  Mode: "file"
+  TimeFormat: "optional"
+  Path: "logs"
+  Level:  "info"
+  Compress: false
+  KeepDays: 1000
+  StackCooldownMillis: 100

@@ -79,7 +79,7 @@ type ServiceDetailResquest struct {
 }
 
 type ServiceStatusResquest struct {
-	ID int64 `json:"id"` // 服务id
+	ID int `json:"id"` // 服务id
 }
 
 type ServiceDetailResponse struct {
@@ -268,6 +268,7 @@ type AddHTTPResquest struct {
 type UpdateHTTPResquest struct {
 	ID                     int64  `json:"id"  validate:"required,min=1"`                       //服务ID
 	ServiceName            string `json:"service_name" validate:"required,valid_service_name"` //服务名
+	ServiceDesc            string `json:"service_desc" validate:"required,max=255,min=1"`      //服务描述
 	RuleType               int    `json:"rule_type"  validate:"max=1,min=0"`                   //接入类型
 	Rule                   string `json:"rule"  validate:"required,valid_rule"`                //域名或者前缀
 	NeedHttps              int    `json:"need_https"  validate:"max=1,min=0"`                  //支持https
@@ -407,6 +408,23 @@ type AppStatusRequest struct {
 
 type AppResponse struct {
 	Message string `json:"msg"`
+}
+
+type AppStatus struct {
+	Today     []int `json:"today"`
+	Yesterday []int `json:"yesterday"`
+}
+
+type GetTokenRequest struct {
+	GrantType string `json:"grant_type" comment:"授权类型"  validate:"required"` //授权类型
+	Scope     string `json:"scope"  comment:"权限范围"  validate:"required"`     //权限范围
+}
+
+type GetTokenResponse struct {
+	AccessToken string `json:"access_token"` //access_token
+	ExpiresIn   int    `json:"expires_in"`   //expires_in
+	TokenType   string `json:"token_type"`   //token_type
+	Scope       string `json:"scope"`        //scope
 }
 
 type APPListResponse struct {

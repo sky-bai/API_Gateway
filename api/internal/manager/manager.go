@@ -1,4 +1,4 @@
-package http_proxy_router
+package manager
 
 import (
 	"API_Gateway/api/internal/config"
@@ -14,43 +14,40 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tal-tech/go-zero/core/conf"
+	"github.com/tal-tech/go-zero/core/stores/sqlc"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
 	"net/http"
 	"strings"
 	"sync"
 )
 
-// ServiceManager 我需要先获取到每个服务的信息
+var S1 *ServiceManager
+
+func init() {
+
+	S1 = NewServiceManager()
+	err := S1.LoadOnce()
+	if err != nil {
+		panic(err)
+		return
+	}
+
+	global.SerInfo = &S1.ServiceSlice
+
+	//for _, detail := range S1.ServiceSlice {
+	//	global.SerInfo = append(global.SerInfo, detail)
+	//}
+	//fmt.Println("👌", global.SerInfo)
+	AppHandler = NewAppManager()
+}
+
+// ServiceManager 需要先获取到每个服务的信息
 type ServiceManager struct {
 	ServiceMap   map[string]*global.ServiceDetail // 一个服务名对于一个服务的详细信息
 	ServiceSlice []global.ServiceDetail           // 服务列表
 	Locker       sync.RWMutex                     // 因为要对map进行读写操作，所以需要加锁
 	Once         sync.Once
 	err          error
-}
-
-func init() {
-	s1 := NewServiceManager()
-	err := s1.LoadOnce()
-	if err != nil {
-		fmt.Println("232345", err)
-		return
-	}
-	for _, detail := range s1.ServiceSlice {
-		fmt.Println("detail", detail.Info)
-		global.SerInfo = append(global.SerInfo, detail)
-	}
-	fmt.Println("hahaha👌", global.SerInfo)
-}
-
-// ServiceDetail 如何新的结构体去获得数据库的权限
-type ServiceDetail struct {
-	Info          *ga_service_info.GatewayServiceInfo                    `json:"info" description:"基本信息"`
-	HTTPRule      *ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
-	TCPRule       *ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
-	GRPCRule      *ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
-	LoadBalance   *ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
-	AccessControl *ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
 }
 
 func NewServiceManager() *ServiceManager {
@@ -61,6 +58,21 @@ func NewServiceManager() *ServiceManager {
 		Once:         sync.Once{},
 		err:          nil,
 	}
+}
+
+// AddService 添加服务
+func (s *ServiceManager) AddService(serDetail global.ServiceDetail) {
+	s.ServiceSlice = append(s.ServiceSlice, serDetail)
+}
+
+// ServiceDetail 如何新的结构体去获得数据库的权限
+type ServiceDetail struct {
+	Info          *ga_service_info.GatewayServiceInfo                    `json:"info" description:"基本信息"`
+	HTTPRule      *ga_service_http_rule.GatewayServiceHttpRule           `json:"http_rule" description:"http_rule"`
+	TCPRule       *ga_service_tcp_rule.GatewayServiceTcpRule             `json:"tcp_rule" description:"tcp_rule"`
+	GRPCRule      *ga_service_grpc_rule.GatewayServiceGrpcRule           `json:"grpc_rule" description:"grpc_rule"`
+	LoadBalance   *ga_service_load_balance.GatewayServiceLoadBalance     `json:"load_balance" description:"load_balance"`
+	AccessControl *ga_service_access_control.GatewayServiceAccessControl `json:"access_control" description:"access_control"`
 }
 
 // LoadOnce 获取到服务列表的详细信息/**/
@@ -184,7 +196,7 @@ func (s *ServiceManager) LoadOnce() error {
 		//1.读取配置文件到结构体中
 		var c config.Config
 		conf.MustLoad("etc/gateway-api.yaml", &c)
-
+		fmt.Println("获取数据库配置成功")
 		// 配置数据库
 		ctx := svc.NewServiceContext(c)
 		serviceInfoList, err := ctx.GatewayServiceInfoModel.FindAllTotal()
@@ -198,37 +210,64 @@ func (s *ServiceManager) LoadOnce() error {
 
 		serviceInfo := serviceInfoList.([]ga_service_info.GatewayServiceInfo)
 		for _, service := range serviceInfo {
-			fmt.Println("👌service", service.Id)
+			//fmt.Println("👌service", service.Id)
 			switch service.LoadType {
 			case errcode.LoadTypeHTTP:
 				httpRule, err = ctx.GatewayServiceHttpRuleModel.FindOneByServiceId(int(service.Id))
-				if err != nil && err != ErrNotFound {
-					s.err = err
-					return
+				if err != nil {
+					if err == sqlc.ErrNotFound {
+						s.err = fmt.Errorf("未找到服务id为 %d http记录", service.Id)
+						return
+					} else {
+						s.err = err
+						return
+					}
 				}
 			case errcode.LoadTypeTCP:
 				tcpRule, err = ctx.GatewayServiceTcpRuleModel.FindOneByServiceId(int(service.Id))
-				if err != nil && err != ErrNotFound {
-					s.err = err
-					return
+				if err != nil {
+					if err == sqlc.ErrNotFound {
+						s.err = fmt.Errorf("未找到服务id为 %d tcp记录", service.Id)
+						return
+					} else {
+						s.err = err
+						return
+					}
 				}
 			default:
 				grpcRule, err = ctx.GatewayServiceGrpcRuleModel.FindOneByServiceId(int(service.Id))
-				if err != nil && err != ErrNotFound {
+				if err != nil {
+					if err == sqlc.ErrNotFound {
+						s.err = fmt.Errorf("未找到服务id为 %d grpc记录", service.Id)
+						grpcRule = &ga_service_grpc_rule.GatewayServiceGrpcRule{}
+						return
+					} else {
+						s.err = err
+						return
+					}
+				}
+			}
+			accessControl, err = ctx.GatewayServiceAccessControlModel.FindOneByServiceId(service.Id)
+			if err != nil {
+				if err == sqlc.ErrNotFound {
+					s.err = fmt.Errorf("未找到服务id为 %d accessControl", service.Id)
+					accessControl = &ga_service_access_control.GatewayServiceAccessControl{}
+					return
+				} else {
 					s.err = err
 					return
 				}
 			}
-			accessControl, err = ctx.GatewayServiceAccessControlModel.FindOneByServiceId(service.Id)
-			if err != nil && err != ErrNotFound {
-				s.err = err
-				return
-			}
 			loadBalance, err = ctx.GatewayServiceLoadBalanceModel.FindOneByServiceId(int(service.Id))
-			if err != nil && err != ErrNotFound {
-				s.err = err
-
-				return
+			if err != nil {
+				if err == sqlc.ErrNotFound {
+					s.err = fmt.Errorf("未找到服务id为 %d loadbalance记录", service.Id)
+					loadBalance = &ga_service_load_balance.GatewayServiceLoadBalance{}
+					return
+				} else {
+					s.err = err
+					return
+				}
 			}
 			s1 := &global.ServiceDetail{
 				Info:          service,
@@ -276,3 +315,46 @@ func (s *ServiceManager) HTTPAccessMode(r *http.Request) (*global.ServiceDetail,
 	}
 	return nil, errors.New("not matched service")
 }
+
+//
+//var LoadBalancerHandler *LoadBalancer
+//
+//// LoadBalancer 每个服务需要对应自己的负载均衡算法
+//type LoadBalancer struct {
+//	LoadBalanceMap   map[string]load_balance.LoadBalance
+//	LoadBalanceSlice []load_balance.LoadBalance
+//	Locker           sync.RWMutex
+//}
+//
+//func NewLoadBalancer() *LoadBalancer {
+//	return &LoadBalancer{
+//		LoadBalanceSlice: []load_balance.LoadBalance{},
+//		LoadBalanceMap:   map[string]load_balance.LoadBalance{},
+//		Locker:           sync.RWMutex{}}
+//}
+//
+//func (lbr *LoadBalancer) GetLoadBalancer(service global.ServiceDetail) (load_balance.LoadBalance, error) {
+//	schema := "http"
+//	if service.HTTPRule.NeedHttps == 1 {
+//		schema = "https"
+//	}
+//	prefix := ""
+//	if service.HTTPRule.RuleType == errcode.HTTPRuleTypePrefixURL {
+//		prefix = service.HTTPRule.Rule
+//	}
+//
+//	ipList := service.LoadBalance.IpList
+//	weightList := service.LoadBalance.WeightList
+//
+//	ipConf:=map[string]string{}
+//	for ipIndex, ipItem := range ipList {
+//		ipConf[string(ipItem)] = string(weightList[ipIndex])
+//	}
+//	checkConf, err := load_balance.NewLoadBalanceCheckConf(
+//		fmt.Sprintf("%s:%s%s", schema, prefix),ipConf)
+//	if err != nil {
+//		return nil, err
+//	}
+//	load_balance.LoadBalanceZkConfInterface(service.LoadBalance.RoundType,checkConf)
+//
+//}

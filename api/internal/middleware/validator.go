@@ -38,6 +38,7 @@ func NewValidator() *Validator {
 		return nil
 	}
 
+	// 如果字段为int类型，前端传的是0的话 这里required会有问题 它会认为0是没有填的
 	newValid.RegisterTranslation("required", newTrans, func(ut ut.Translator) error {
 		return ut.Add("required", "{0} 该字段不能为空!", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -61,6 +62,7 @@ func NewValidator() *Validator {
 		return nil
 	}
 	newValid.RegisterValidation("valid_service_name", func(fl validator.FieldLevel) bool { // `^[a-zA-Z0-9_】$`
+		// 判断是否满足正则表达式
 		matched, _ := regexp.Match(`^[a-zA-Z0-9_]{6,128}$`, []byte(fl.Field().String())) // 规定只能数字字母下划线 所以加^$
 		return matched
 	})
@@ -102,8 +104,8 @@ func NewValidator() *Validator {
 		if fl.Field().String() == "" {
 			return true
 		}
-		for _, item := range strings.Split(fl.Field().String(), ",") {
-			matched, _ := regexp.Match(`^\S+\:\d+$`, []byte(item)) //ip_addr  `^\S\:\d+$`
+		for _, item := range strings.Split(fl.Field().String(), "\n") {
+			matched, _ := regexp.Match(`^\S+$`, []byte(item)) //ip_addr  `^\S\:\d+$`  ^开始 $结束 \S非空白符 \d数字 +一个或多个
 			if !matched {
 				return false
 			}
@@ -111,7 +113,6 @@ func NewValidator() *Validator {
 		return true
 	})
 	newValid.RegisterValidation("valid_weightlist", func(fl validator.FieldLevel) bool {
-
 		for _, ms := range strings.Split(fl.Field().String(), ",") {
 			if matched, _ := regexp.Match(`^\d+$`, []byte(ms)); !matched {
 				return false
@@ -165,7 +166,7 @@ func NewValidator() *Validator {
 		return t
 	})
 	newValid.RegisterTranslation("valid_weightlist", newTrans, func(ut ut.Translator) error {
-		return ut.Add("valid_weightlist", "{0} 不符合输入格式", true)
+		return ut.Add("valid_weightlist", "权重列表 不符合输入格式", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("valid_weightlist", fe.Field())
 		return t

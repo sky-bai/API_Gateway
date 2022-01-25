@@ -2,7 +2,7 @@ Name: gateway-api
 Host: 0.0.0.0
 Port: 8887
 Mysql:
-  DataSource: root:12345678@tcp(121.196.163.8:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:12345678@tcp(127.0.0.1:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 CacheRedis:
   - Host: $host
     Pass: $pass
@@ -15,13 +15,14 @@ Cluster:
   ClusterPort: "8080"
   ClusterSslPort: "4433"
 
+# 网关代理向外暴露的请求地址
 HTTPProxy:
   Name: "http_proxy"
   Host: "0.0.0.0"
   Port: 8080
 
 HTTPSProxy:
-  Name: "http_proxy"
-  Host: "0.0.0.0"
+  Name: "https_proxy"
+  Host: "127.0.0.1"
   Port: 4433
 
