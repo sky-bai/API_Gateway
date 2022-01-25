@@ -28,14 +28,14 @@ func GrpcServer() {
 				loadBalancer, err := global.LoadBalanceHandler.GetLoadBalancer(serviceInfo) // 负载均衡只维护下游服务器地址 不维护path
 				//fmt.Println("loadBalancer:", Obj2Json(loadBalancer))
 				if err != nil {
-					logx.Error(" [INFO] GetTcpLoadBalancer %v err:%v\n", serviceInfo.GRPCRule.Port, err)
+					logx.Error(" [INFO] GetTcpLoadBalancer %v err:%v", serviceInfo.GRPCRule.Port, err)
 					return
 				}
 
 				// 启动服务器
 				lis, err := net.Listen("tcp", addr)
 				if err != nil {
-					logx.Error(" [INFO] net.Listen err:%v\n", err)
+					logx.Error(" [INFO] net.Listen err:%v", err)
 					return
 				}
 
@@ -60,11 +60,11 @@ func GrpcServer() {
 					Addr:   addr,
 					Server: s,
 				})
-				logx.Info(" [INFO] grpc_proxy_run %v\n", addr)
+				logx.Infof(" [INFO] grpc_proxy_run %s", addr)
 
 				// 4.启动服务器
 				if err := s.Serve(lis); err != nil {
-					logx.Error(" [INFO] grpc_proxy_run %v err:%v\n", addr, err)
+					logx.Error(" [INFO] grpc_proxy_run %v err:%v", addr, err)
 				}
 
 			}(tempDetail)

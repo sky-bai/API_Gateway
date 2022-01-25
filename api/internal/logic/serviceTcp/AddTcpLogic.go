@@ -104,3 +104,6 @@ func (l *AddTcpLogic) AddTcp(req types.AddTcpRequest) (*types.Response, error) {
 
 	return &types.Response{Msg: "增加tcp服务成功"}, nil
 }
+
+// 1.增加tcp服务后后会更新全局变量里面的服务信息
+// updating service info in global variable after adding tcp service

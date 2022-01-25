@@ -29,9 +29,9 @@ type (
 		Update(data GatewayAdmin) error
 		Delete(id int64) error
 
-		// 通过用户名查找密码
+		// FindOneByUserName 通过用户名查找密码
 		FindOneByUserName(userName string) (*GatewayAdmin, error)
-		// 修改密码
+		// UpdatePwd 修改密码
 		UpdatePwd(data GatewayAdmin) error
 	}
 
@@ -41,13 +41,13 @@ type (
 	}
 
 	GatewayAdmin struct {
-		Id       int64     `db:"id"`        // 自增id
-		UserName string    `db:"user_name"` // 用户名
-		Salt     string    `db:"salt"`      // 盐
-		Password string    `db:"password"`  // 密码
-		CreateAt time.Time `db:"create_at"` // 新增时间
-		UpdateAt time.Time `db:"update_at"` // 更新时间
-		IsDelete int64     `db:"is_delete"` // 是否删除 0未删除 1已删除
+		Id       int64     `db:"id"`          // 自增id
+		UserName string    `db:"user_name"`   // 用户名
+		Salt     string    `db:"salt"`        // 盐
+		Password string    `db:"password"`    // 密码
+		CreateAt time.Time `db:"create_time"` // 新增时间
+		UpdateAt time.Time `db:"update_time"` // 更新时间
+		IsDelete int64     `db:"is_delete"`   // 是否删除 0未删除 1已删除
 	}
 )
 
@@ -78,7 +78,7 @@ func (m *defaultGatewayAdminModel) FindOne(id int64) (*GatewayAdmin, error) {
 	}
 }
 
-// 通过用户名查找密码
+// FindOneByUserName 通过用户名查找密码
 func (m *defaultGatewayAdminModel) FindOneByUserName(userName string) (*GatewayAdmin, error) {
 	query := fmt.Sprintf("select * from %s where `user_name` = ? limit 1", m.table)
 	var resp GatewayAdmin

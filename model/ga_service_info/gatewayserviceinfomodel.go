@@ -58,6 +58,8 @@ type (
 
 		// GetAllNum 获取每个服务的数量
 		GetAllNum() ([]ServiceNum, error)
+		// UpdateTcpService 更新tcp服务
+		UpdateTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, lb ga_service_load_balance.GatewayServiceLoadBalance) error
 	}
 
 	defaultGatewayServiceInfoModel struct {
@@ -102,7 +104,7 @@ func (m *defaultGatewayServiceInfoModel) Insert(data GatewayServiceInfo) (sql.Re
 }
 
 func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", gatewayServiceInfoRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? and `is_delete` = 0 limit 1", gatewayServiceInfoRows, m.table)
 	var resp GatewayServiceInfo
 	err := m.conn.QueryRow(&resp, query, id)
 	switch err {
@@ -117,14 +119,14 @@ func (m *defaultGatewayServiceInfoModel) FindOne(id int64) (*GatewayServiceInfo,
 
 // FindOneByServiceName 根据服务名查找一条数据
 func (m *defaultGatewayServiceInfoModel) FindOneByServiceName(serviceName string) (int, error) {
-	query := fmt.Sprintf("select id from %s where `service_name` = ? limit 1", m.table)
+	query := fmt.Sprintf("select id from %s where `service_name` = ? and `is_delete` = 0 limit 1", m.table)
 	var resp int
 	err := m.conn.QueryRow(&resp, query, serviceName)
 	switch err {
 	case nil:
 		return resp, nil
 	case sqlc.ErrNotFound:
-		return 0, nil
+		return 0, ErrNotFound
 	default:
 		return 0, err
 	}
@@ -185,7 +187,7 @@ func (m *defaultGatewayServiceInfoModel) Update(data GatewayServiceInfo) error {
 // UpdateDate 更新http服务
 func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, hr ga_service_http_rule.GatewayServiceHttpRule, ac ga_service_access_control.GatewayServiceAccessControl, lb ga_service_load_balance.GatewayServiceLoadBalance) error {
 
-	UpdateServiceSql := fmt.Sprintf("update %s set service_name = '%s',service_desc = ? where `id` = ?", m.table, req.ServiceName)
+	UpdateServiceSql := fmt.Sprintf("update %s set service_desc = ? where `id` = ?", m.table)
 	fmt.Println("UpdateServiceSql", UpdateServiceSql)
 
 	err := m.conn.Transact(func(session sqlx.Session) error {
@@ -233,7 +235,7 @@ func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, hr g
 		}
 
 		// 4.写入负载均衡控制表
-		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set check_method = ?,check_timeout = ?,check_interval = ?, ip_list = ?,weight_list = ?,forbid_list = ?,upstream_connect_timeout = ?,upstream_header_timeout = ?,upstream_idle_timeout = ?,upstream_max_idle = ? where service_id = ?")
+		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set check_method = ?,check_timeout = ?,check_interval = ?, ip_list = ?,weight_list = ?,forbid_list = ?,upstream_connect_timeout = ?,upstream_header_timeout = ?,upstream_idle_timeout = ?,upstream_max_idle = ?,round_type = ? where service_id = ?")
 		fmt.Println("updateLoadBalanceSql :", updateLoadBalanceSql)
 
 		stmt3, err := session.Prepare(updateLoadBalanceSql)
@@ -242,7 +244,7 @@ func (m *defaultGatewayServiceInfoModel) UpdateDate(req GatewayServiceInfo, hr g
 			return errors.New("更新http rule服务失败")
 		}
 		defer stmt3.Close()
-		if _, err := stmt3.Exec(lb.CheckMethod, lb.CheckTimeout, lb.CheckInterval, lb.IpList, lb.WeightList, lb.ForbidList, lb.UpstreamConnectTimeout, lb.UpstreamHeaderTimeout, lb.UpstreamIdleTimeout, lb.UpstreamMaxIdle, req.Id); err != nil {
+		if _, err := stmt3.Exec(lb.CheckMethod, lb.CheckTimeout, lb.CheckInterval, lb.IpList, lb.WeightList, lb.ForbidList, lb.UpstreamConnectTimeout, lb.UpstreamHeaderTimeout, lb.UpstreamIdleTimeout, lb.UpstreamMaxIdle, lb.RoundType, req.Id); err != nil {
 			fmt.Println("updateLoadBalanceSql err:", err)
 			return errors.New("更新http rule服务失败")
 		}
@@ -522,7 +524,7 @@ func (m *defaultGatewayServiceInfoModel) FindAll(info string, pageSize, pageNum 
 
 // FindAllTotal 直接获取所有服务信息不分页
 func (m *defaultGatewayServiceInfoModel) FindAllTotal() (interface{}, error) {
-	query := fmt.Sprintf("select * from %s", m.table)
+	query := fmt.Sprintf("select * from %s where is_delete = 0", m.table)
 	var resp []GatewayServiceInfo
 	err := m.conn.QueryRows(&resp, query)
 	switch err {
@@ -565,4 +567,72 @@ func (m *defaultGatewayServiceInfoModel) GetAllNum() ([]ServiceNum, error) {
 	default:
 		return nil, err
 	}
+}
+
+// UpdateTcpService 更新tcp服务信息
+func (m *defaultGatewayServiceInfoModel) UpdateTcpService(req GatewayServiceInfo, data ga_service_tcp_rule.GatewayServiceTcpRule, ac ga_service_access_control.GatewayServiceAccessControl, lb ga_service_load_balance.GatewayServiceLoadBalance) error {
+	UpdateServiceSql := fmt.Sprintf("update %s set service_desc = ? where `id` = ?", m.table)
+	fmt.Println("UpdateServiceSql", UpdateServiceSql)
+	err := m.conn.Transact(func(session sqlx.Session) error {
+
+		// 1.更新serviceInfo表数据
+		stmt, err := session.Prepare(UpdateServiceSql)
+		if err != nil {
+			fmt.Println("updateServiceInfo:err", err)
+			return errors.New("更新tcp info服务失败")
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(req.ServiceDesc, req.Id)
+		if err != nil {
+			fmt.Println("UpdateServiceSql exec", err)
+			return errors.New("更新tcp info服务失败")
+		}
+
+		// 2.更新http规则表
+		UpdateTcpSql := fmt.Sprintf("update gateway_service_tcp_rule set port = ? where service_id = ? ")
+
+		stmt1, err := session.Prepare(UpdateTcpSql)
+		if err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return errors.New("更新tcp rule服务失败")
+		}
+		defer stmt1.Close()
+		if _, err := stmt1.Exec(data.Port, req.Id); err != nil {
+			fmt.Println("UpdateTcpSql err:", err)
+			return errors.New("更新http rule服务失败")
+		}
+
+		// 3.写入权限控制表
+		updateAccessControlSql := fmt.Sprintf("update gateway_service_access_control set open_auth = ?, black_list = ?, white_list = ?, white_host_name = ?, clientip_flow_limit = ?, service_flow_limit = ? where service_id = ?")
+		fmt.Println("updateAccessControlSql :", updateAccessControlSql)
+
+		stmt2, err := session.Prepare(updateAccessControlSql)
+		if err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return errors.New("更新updateAccessControlSql服务失败")
+		}
+		defer stmt2.Close()
+		if _, err := stmt2.Exec(ac.OpenAuth, ac.BlackList, ac.WhiteList, ac.WhiteHostName, ac.ClientipFlowLimit, ac.ServiceFlowLimit, req.Id); err != nil {
+			fmt.Println("updateAccessControlSql err:", err)
+			return errors.New("更新updateAccessControlSql服务失败")
+		}
+
+		// 4.写入负载均衡控制表
+		updateLoadBalanceSql := fmt.Sprintf("update gateway_service_load_balance set check_method = ?,check_timeout = ?,check_interval = ?, ip_list = ?,weight_list = ?,forbid_list = ?,upstream_connect_timeout = ?,upstream_header_timeout = ?,upstream_idle_timeout = ?,upstream_max_idle = ?,round_type = ? where service_id = ?")
+		fmt.Println("updateLoadBalanceSql :", updateLoadBalanceSql)
+
+		stmt3, err := session.Prepare(updateLoadBalanceSql)
+		if err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return errors.New("更新updateLoadBalanceSql服务失败")
+		}
+		defer stmt3.Close()
+		if _, err := stmt3.Exec(lb.CheckMethod, lb.CheckTimeout, lb.CheckInterval, lb.IpList, lb.WeightList, lb.ForbidList, lb.UpstreamConnectTimeout, lb.UpstreamHeaderTimeout, lb.UpstreamIdleTimeout, lb.UpstreamMaxIdle, lb.RoundType, req.Id); err != nil {
+			fmt.Println("updateLoadBalanceSql err:", err)
+			return errors.New("更新updateLoadBalanceSql服务失败")
+		}
+
+		return nil
+	})
+	return err
 }
