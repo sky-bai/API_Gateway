@@ -2,7 +2,6 @@ package main
 
 import (
 	"API_Gateway/api/internal/config"
-	"API_Gateway/api/internal/config/cert_file"
 	"API_Gateway/api/internal/global"
 	"API_Gateway/api/internal/grpc_proxy_router"
 	"API_Gateway/api/internal/handler"
@@ -72,21 +71,21 @@ func main() {
 	}()
 
 	// 3.启动https代理服务
-	go func() {
-		c2 := c
-		c2.RestConf.Name = c.HTTPSProxy.Name
-		c2.RestConf.Host = c.HTTPSProxy.Host
-		c2.RestConf.Port = c.HTTPSProxy.Port
-		c2.RestConf.CertFile = cert_file.Path("server.crt")
-		c2.RestConf.KeyFile = cert_file.Path("server.key")
-
-		server2 := rest.MustNewServer(c2.RestConf)
-		defer server2.Stop()
-		handler.RegisterHandlers(server2, ctx)
-
-		fmt.Printf("Starting https proxy server at %s:%d...\n", c2.Host, c2.Port)
-		server2.Start()
-	}()
+	//go func() {
+	//	c2 := c
+	//	c2.RestConf.Name = c.HTTPSProxy.Name
+	//	c2.RestConf.Host = c.HTTPSProxy.Host
+	//	c2.RestConf.Port = c.HTTPSProxy.Port
+	//	c2.RestConf.CertFile = cert_file.Path("server.crt")
+	//	c2.RestConf.KeyFile = cert_file.Path("server.key")
+	//
+	//	server2 := rest.MustNewServer(c2.RestConf)
+	//	defer server2.Stop()
+	//	handler.RegisterHandlers(server2, ctx)
+	//
+	//	fmt.Printf("Starting https proxy server at %s:%d...\n", c2.Host, c2.Port)
+	//	server2.Start()
+	//}()
 
 	go func() {
 
