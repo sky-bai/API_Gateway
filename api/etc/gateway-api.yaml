@@ -4,7 +4,7 @@ Port: 8887
 Mysql:
   DataSource: root:12345678@tcp(121.196.163.8:3306)/go_gateway_test2?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 CacheRedis:
-  - Host: $host
+  - Host: 101.43.106.75
     Pass: $pass
     Type: node
 Auth:
